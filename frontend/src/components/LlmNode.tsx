@@ -8,7 +8,7 @@ export type NodeProps = {
     selected: boolean
 }
 
-export default function LLMNode ({ selected, id }: NodeProps) {
+export default function LLMNode ({ selected, id: nodeId }: NodeProps) {
     const inputRef = useRef<HTMLTextAreaElement>(null)
     const [model, setModel] = useState("chatgpt")
     const [prompt, setPrompt] = useState("")
@@ -34,7 +34,7 @@ export default function LLMNode ({ selected, id }: NodeProps) {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ model, prompt }),
+                body: JSON.stringify({ model, prompt, nodeId }),
                 signal: controller.signal,
             })
             const data = await response.json()
@@ -73,14 +73,14 @@ export default function LLMNode ({ selected, id }: NodeProps) {
                 </select>
             </NodeToolbar>
             <Handle
-                id={id}
+                id={nodeId}
                 type="target"
                 isConnectable={false}
                 position={Position.Left}
                 className="invisible"
             />
             <Handle
-                id={id}
+                id={nodeId}
                 type="source"
                 position={Position.Right}
                 className="w-4 h-4 mt-[4px] rounded-lg !bg-white border-gray-500 border-2"

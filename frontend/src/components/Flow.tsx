@@ -10,6 +10,7 @@ import {
     useEdgesState,
     useNodesState,
     useReactFlow,
+    MarkerType,
 } from '@xyflow/react'
 import '@xyflow/react/dist/base.css'
 
@@ -17,8 +18,9 @@ import LLMNode from "./LlmNode"
 import ViewportInfo from './ViewportInfo'
 
 
+const strokeColor = '#1F2937'
 const edgeStyles = {
-    stroke: '#1F2937',
+    stroke: strokeColor,
     strokeWidth: 2,
 }
 
@@ -69,7 +71,20 @@ export default function Flow() {
             
                 setNodes((nds) => nds.concat(newNode))
                 setEdges((eds) => {
-                    return [...eds, { id, source: connectionState.fromNode.id, target: id }]
+                    return [
+                        ...eds,
+                        {
+                            id,
+                            source: connectionState.fromNode.id,
+                            target: id,
+                            markerEnd: {
+                                type: MarkerType.ArrowClosed,
+                                width: 20,
+                                height: 20,
+                                color: strokeColor,
+                            },
+                        }
+                    ]
                 })
             }
         },
