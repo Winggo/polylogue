@@ -110,13 +110,12 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
                 bg-white
                 text-black
                 border-gray-800
-                rounded-[20px]
+                rounded-[30px]
                 shadow-xl
                 ${selected && "outline shadow-2xl"}
                 group-focus-within:outline shadow-2xl
                 flex
                 p-3
-                pt-3.5
                 flex-col
                 cursor-default
                 overflow-hidden
@@ -136,7 +135,13 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
                                 }
                             }
                         }}
-                        className="h-8 mr-1 flex-grow focus:outline-none"
+                        className={`
+                            h-8
+                            pt-1
+                            mr-1
+                            flex-grow
+                            focus:outline-none
+                        `}
                         rows={1}
                         onInput={(e) => {
                             const target = e.target as HTMLTextAreaElement;

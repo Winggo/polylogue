@@ -37,7 +37,8 @@ claude_model = ChatAnthropic(
 
 prompt_template = PromptTemplate(
     input_variables=["context", "prompt"],
-    template="""Given the following dialog context and prompt, please provide a response in less than 120 words.
+    template="""Given the following context and prompt, please provide a response in less than 120 words.
+    Do not mention the response name or the context name in your response.
     *Context:*
     {context}
 
