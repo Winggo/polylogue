@@ -22,6 +22,7 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
     const [prompt, setPrompt] = useState("")
     const [promptResponse , setPromptResponse] = useState("")
     const [loading, setLoading] = useState(false)
+    const [isHovered, setIsHovered] = useState(false)
     const connections = useNodeConnections({
         handleType: 'target',
     })
@@ -71,8 +72,12 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
     const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => setModel(e.target.value)
 
     return (
-        <div className="group">
-            <NodeToolbar isVisible className="bg-gray-800 p-2 rounded-[20px]">
+        <div
+            className="group"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            {(selected || isHovered) && <NodeToolbar isVisible className="bg-gray-800 p-2 rounded-[20px]">
                 <select
                     value={model}
                     onChange={handleModelChange}
@@ -90,7 +95,7 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
                     <option value="chatgpt">ChatGPT</option>
                     <option value="claude">Claude</option>
                 </select>
-            </NodeToolbar>
+            </NodeToolbar>}
             <Handle
                 id={nodeId}
                 type="target"
@@ -102,7 +107,7 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
                 id={nodeId}
                 type="source"
                 position={Position.Right}
-                className="w-4 h-4 mt-[4px] rounded-lg !bg-white border-gray-500 border-2"
+                className="w-4 h-4 mt-[4px] rounded-lg !bg-white border-gray-500 border-2 hover:!bg-black"
             />
             <div className={`
                 w-[400px]
@@ -112,8 +117,9 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
                 border-gray-800
                 rounded-[30px]
                 shadow-xl
-                ${selected && "outline shadow-2xl"}
-                group-focus-within:outline shadow-2xl
+                ${isHovered && !selected && "outline-[2px] outline-orange-500"}
+                ${selected && "outline-[2px] shadow-2xl"}
+                group-focus-within:outline-[2px] shadow-2xl
                 flex
                 p-3
                 flex-col
@@ -141,6 +147,7 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
                             mr-1
                             flex-grow
                             focus:outline-none
+                            resize-none
                         `}
                         rows={1}
                         onInput={(e) => {
@@ -149,11 +156,11 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
                             target.style.height = `${target.scrollHeight}px`
                         }}
                     ></textarea>
-                    <svg onClick={(e) => submitPrompt()} xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-circle-arrow-down rounded-full bg-background-opaque-white stroke-text-dark transition-all hover:stroke-gray-600 duration-300 cursor-pointer rotate-180 ${loading && "stroke-gray-600"}`}>
+                    {(selected || isHovered) ? <svg onClick={(e) => submitPrompt()} xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-circle-arrow-down rounded-full bg-background-opaque-white stroke-text-dark transition-all hover:stroke-gray-600 duration-300 cursor-pointer rotate-180 ${loading && "stroke-gray-600"}`}>
                         <circle cx="12" cy="12" r="10"></circle>
                         <path d="m16 12-4-4-4 4"></path>
                         <path d="M12 16V8"></path>
-                    </svg>
+                    </svg> : <div className="h-[32px] w-[32px]"></div>}
                 </div>
                 <div className={`border-t border-gray-300 mt-1 mb-1 group-focus-within:border-gray-800`}></div>
                 <div className="overflow-y-auto h-full flex">

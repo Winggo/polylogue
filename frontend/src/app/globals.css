@@ -29,3 +29,7 @@ body {
   stroke-width: 4px;
   stroke: #000;
 }
+
+.react-flow__node-llmText {
+  border-radius: 30px;
+}
