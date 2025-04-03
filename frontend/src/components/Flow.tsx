@@ -69,8 +69,7 @@ export default function Flow() {
             
                 setNodes((nds) => nds.concat(newNode))
                 setEdges((eds) => {
-                    const updatedEds = eds.concat({ id, source: connectionState.fromNode.id, target: id })
-                    return updatedEds
+                    return [...eds, { id, source: connectionState.fromNode.id, target: id }]
                 })
             }
         },

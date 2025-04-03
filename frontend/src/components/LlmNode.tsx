@@ -9,17 +9,19 @@ export type NodeProps = {
 }
 
 export default function LLMNode ({ selected, id }: NodeProps) {
-    const inputRef = useRef<HTMLInputElement>(null)
+    const inputRef = useRef<HTMLTextAreaElement>(null)
     const [model, setModel] = useState("chatgpt")
     const [prompt, setPrompt] = useState("")
     const [promptResponse , setPromptResponse] = useState("")
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-        if (selected && inputRef.current) {
-            inputRef.current.focus()
+        if (selected) {
+            setTimeout(() => {
+                inputRef.current?.focus()
+            }, 0)
         }
-    }, [selected])
+    }, [])
 
     const submitPrompt = async () => {
         const controller = new AbortController()
@@ -46,11 +48,11 @@ export default function LLMNode ({ selected, id }: NodeProps) {
         }
     }
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => setPrompt(e.target.value)
+    const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => setPrompt(e.target.value)
     const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => setModel(e.target.value)
 
     return (
-        <>
+        <div className="group">
             <NodeToolbar isVisible className="bg-gray-800 p-2 rounded-[20px]">
                 <select
                     value={model}
@@ -92,39 +94,50 @@ export default function LLMNode ({ selected, id }: NodeProps) {
                 rounded-[20px]
                 shadow-xl
                 ${selected && "outline shadow-2xl"}
+                group-focus-within:outline shadow-2xl
                 flex
                 p-3
+                pt-3.5
                 flex-col
                 cursor-default
                 overflow-hidden
+                
             `}>
                 <div className="flex justify-between">
-                    <input
+                    <textarea
                         ref={inputRef}
-                        type="text"
                         placeholder="What is your prompt?"
                         value={prompt}
                         onChange={handleInputChange}
                         onKeyDown={(e) => {
                             if (e.key === "Enter") {
-                                submitPrompt()
+                                e.preventDefault()
+                                if (prompt !== "") {
+                                    submitPrompt()
+                                }
                             }
                         }}
                         className="h-8 mr-1 flex-grow focus:outline-none"
-                    />
+                        rows={1}
+                        onInput={(e) => {
+                            const target = e.target as HTMLTextAreaElement;
+                            target.style.height = "32px"
+                            target.style.height = `${target.scrollHeight}px`
+                        }}
+                    ></textarea>
                     <svg onClick={(e) => submitPrompt()} xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-circle-arrow-down rounded-full bg-background-opaque-white stroke-text-dark transition-all hover:stroke-gray-600 duration-300 cursor-pointer rotate-180 ${loading && "stroke-gray-600"}`}>
                         <circle cx="12" cy="12" r="10"></circle>
                         <path d="m16 12-4-4-4 4"></path>
                         <path d="M12 16V8"></path>
                     </svg>
                 </div>
-                <div className={`border-t border-gray-300 mt-1 mb-1 ${selected && "border-gray-800"}`}></div>
+                <div className={`border-t border-gray-300 mt-1 mb-1 group-focus-within:border-gray-800`}></div>
                 <div className="overflow-y-auto h-full flex">
                     {loading ? (
                         <LoadingWheel />
                     ) : promptResponse ? promptResponse : (
-                        <div className="flex flex-col items-center w-full h-full">
-                            <div className="my-[100px] p-3 text-gray-600 text-[18px]">
+                        <div className="w-full h-full flex flex-col items-center justify-around">
+                            <div>
                                 You can...
                                 <br />
                                 - create a packing list 🏕️
@@ -142,6 +155,6 @@ export default function LLMNode ({ selected, id }: NodeProps) {
                     )}
                 </div>
             </div>
-        </>
+        </div>
     )
 }
