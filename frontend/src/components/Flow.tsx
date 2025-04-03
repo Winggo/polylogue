@@ -59,7 +59,6 @@ export default function Flow() {
             event: MouseEvent | TouchEvent,
             connectionState: { isValid: boolean | null; fromNode: Node }
         ) => {
-            console.log("DEBUG", connectionState)
             if (!connectionState.isValid || !connectionState.fromNode) {
                 const id = getId()
                 const { clientX, clientY } =
