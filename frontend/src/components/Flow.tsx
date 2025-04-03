@@ -11,6 +11,9 @@ import {
     useNodesState,
     useReactFlow,
     MarkerType,
+    Connection,
+    Node,
+    Edge,
 } from '@xyflow/react'
 import '@xyflow/react/dist/base.css'
 
@@ -35,29 +38,33 @@ const initialNodes = [
         id: '0',
         position: { x: 10, y: 100 },
         type: 'llmText',
-        data: {},
+        data: { notConnectable: true },
         selected: true,
     },
 ]
 
 
 export default function Flow() {
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
-    const [edges, setEdges, onEdgesChange] = useEdgesState([])
+    const [nodes, setNodes, onNodesChange] = useNodesState<Node>(initialNodes)
+    const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
     const { screenToFlowPosition } = useReactFlow()
 
     const onConnect = useCallback(
-        (params) => setEdges((eds) => addEdge(params, eds)),
+        (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
         [],
     )
 
     const onConnectEnd = useCallback(
-        (event, connectionState) => {
-            if (!connectionState.isValid) {
+        (
+            event: MouseEvent | TouchEvent,
+            connectionState: { isValid: boolean | null; fromNode: Node }
+        ) => {
+            console.log("DEBUG", connectionState)
+            if (!connectionState.isValid || !connectionState.fromNode) {
                 const id = getId()
                 const { clientX, clientY } =
                     'changedTouches' in event ? event.changedTouches[0] : event
-                const newNode = {
+                const newNode: Node = {
                     id,
                     position: screenToFlowPosition({
                         x: clientX,
@@ -68,24 +75,20 @@ export default function Flow() {
                     origin: [0.0, 0.5],
                     selected: true,
                 }
+                const newEdge: Edge = {
+                    id,
+                    source: connectionState.fromNode.id,
+                    target: id,
+                    markerEnd: {
+                        type: MarkerType.ArrowClosed,
+                        width: 20,
+                        height: 20,
+                        color: strokeColor,
+                    },
+                }
             
                 setNodes((nds) => nds.concat(newNode))
-                setEdges((eds) => {
-                    return [
-                        ...eds,
-                        {
-                            id,
-                            source: connectionState.fromNode.id,
-                            target: id,
-                            markerEnd: {
-                                type: MarkerType.ArrowClosed,
-                                width: 20,
-                                height: 20,
-                                color: strokeColor,
-                            },
-                        }
-                    ]
-                })
+                setEdges((eds) => [...eds, newEdge])
             }
         },
         [screenToFlowPosition],

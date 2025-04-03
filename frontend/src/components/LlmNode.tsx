@@ -1,19 +1,33 @@
 import { useState, useRef, useEffect } from "react"
-import { Handle, Position, NodeToolbar } from '@xyflow/react'
+import {
+    Handle,
+    Position,
+    NodeToolbar,
+    useNodeConnections,
+    useNodesData,
+    type Node,
+} from '@xyflow/react'
 
 import LoadingWheel from "../icons/LoadingWheel"
 
-export type NodeProps = {
+export type LLMNodeProps = {
     id: string
     selected: boolean
+    data: Record<string, any>
 }
 
-export default function LLMNode ({ selected, id: nodeId }: NodeProps) {
+export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
     const inputRef = useRef<HTMLTextAreaElement>(null)
     const [model, setModel] = useState("chatgpt")
     const [prompt, setPrompt] = useState("")
     const [promptResponse , setPromptResponse] = useState("")
     const [loading, setLoading] = useState(false)
+    const connections = useNodeConnections({
+        handleType: 'target',
+    })
+    const parentNodes = useNodesData<Node>(
+        connections.map((connection) => connection.source),
+    )
 
     useEffect(() => {
         if (selected) {
@@ -34,7 +48,12 @@ export default function LLMNode ({ selected, id: nodeId }: NodeProps) {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ model, prompt, nodeId }),
+                body: JSON.stringify({
+                    model,
+                    prompt,
+                    nodeId,
+                    parentNodes,
+                }),
                 signal: controller.signal,
             })
             const data = await response.json()
@@ -75,9 +94,9 @@ export default function LLMNode ({ selected, id: nodeId }: NodeProps) {
             <Handle
                 id={nodeId}
                 type="target"
-                isConnectable={false}
+                isConnectable={!data.notConnectable}
                 position={Position.Left}
-                className="invisible"
+                className={`w-4 h-4 mt-[4px] rounded-lg !bg-white border-gray-500 border-2 ${data.notConnectable && "invisible"}`}
             />
             <Handle
                 id={nodeId}
