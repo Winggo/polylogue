@@ -109,7 +109,7 @@ export default function Flow() {
                     connectionLineStyle={edgeStyles}
                 >
                     <Background gap={25} />
-                    <Controls position="top-right" showInteractive={false} />
+                    <Controls position="top-right" showInteractive={true} />
                     <ViewportInfo />
                 </ReactFlow>
             </div>

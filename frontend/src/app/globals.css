@@ -33,3 +33,12 @@ body {
 .react-flow__node-llmText {
   border-radius: 30px;
 }
+
+.react-flow__controls {
+  background-color: white;
+}
+
+.react-flow__controls-button {
+  color: black;
+  cursor: pointer;
+}
