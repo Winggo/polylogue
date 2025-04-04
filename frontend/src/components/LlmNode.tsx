@@ -16,9 +16,15 @@ export type LLMNodeProps = {
     data: Record<string, any>
 }
 
+const initalModel = "gpt-4o"
+const models = [
+    { value: "gpt-4o", label: "GPT-4o" },
+    { value: "claude-sonnet", label: "Claude 3.5 Sonnet" },
+]
+
 export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
     const inputRef = useRef<HTMLTextAreaElement>(null)
-    const [model, setModel] = useState("chatgpt")
+    const [model, setModel] = useState(initalModel)
     const [prompt, setPrompt] = useState("")
     const [promptResponse , setPromptResponse] = useState("")
     const [loading, setLoading] = useState(false)
@@ -92,8 +98,11 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
                     `}
                 >
                     <option value="" disabled>Select a model</option>
-                    <option value="gpt-4o">GPT-4o</option>
-                    <option value="claude-sonnet">Claude 3.5 Sonnet</option>
+                    {models.map((model) => (
+                        <option key={model.value} value={model.value}>
+                            {model.label}
+                        </option>
+                    ))}
                 </select>
             </NodeToolbar>}
             <Handle
