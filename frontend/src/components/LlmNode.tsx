@@ -92,8 +92,8 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
                     `}
                 >
                     <option value="" disabled>Select a model</option>
-                    <option value="chatgpt">ChatGPT</option>
-                    <option value="claude">Claude</option>
+                    <option value="gpt-4o">GPT-4o</option>
+                    <option value="claude-sonnet">Claude 3.5 Sonnet</option>
                 </select>
             </NodeToolbar>}
             <Handle

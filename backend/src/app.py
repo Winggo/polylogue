@@ -26,11 +26,11 @@ def check_redis_connection():
     
 
 # Initialize LLMs
-chatgpt_model = ChatOpenAI(
+gpt_4o_model = ChatOpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
     model="gpt-4o",
 )
-claude_model = ChatAnthropic(
+claude_sonnet_model = ChatAnthropic(
     api_key=os.getenv("ANTHROPIC_API_KEY"),
     model="claude-3-5-sonnet-20240620",
 )
@@ -47,8 +47,8 @@ prompt_template = PromptTemplate(
     {prompt}"""
 )
 
-claude_chain = LLMChain(llm=claude_model, prompt=prompt_template)
-chatgpt_chain = LLMChain(llm=chatgpt_model, prompt=prompt_template)
+gpt_4o_chain = LLMChain(llm=gpt_4o_model, prompt=prompt_template)
+sonnet_chain = LLMChain(llm=claude_sonnet_model, prompt=prompt_template)
 
 def create_chained_response(
         model: str,
@@ -57,13 +57,13 @@ def create_chained_response(
 ) -> str:
     context = "\n\n".join(prev_chat_responses)
 
-    if model == "chatgpt":
-        chained_response = chatgpt_chain.invoke({
+    if model == "gpt-4o":
+        chained_response = gpt_4o_chain.invoke({
             "context": context,
             "prompt": prompt
         })
-    elif model == "claude":
-        chained_response = claude_chain.invoke({
+    elif model == "claude-sonnet":
+        chained_response = sonnet_chain.invoke({
             "context": context,
             "prompt": prompt
         })
