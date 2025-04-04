@@ -36,9 +36,9 @@ const nodeTypes = {
 const initialNodes = [
     {
         id: '0',
-        position: { x: 10, y: 100 },
+        position: { x: 100, y: 100 },
         type: 'llmText',
-        data: { notConnectable: true },
+        data: {},
         selected: true,
     },
 ]
