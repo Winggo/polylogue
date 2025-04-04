@@ -79,7 +79,7 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => setPrompt(e.target.value)
-    const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => setModel(e.target.value)
+    const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => setModel(e.target.value as keyof typeof modelMapping)
 
     const renderModelDropdown = () => {
         if (!selected && !isHovered) return
