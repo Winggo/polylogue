@@ -1,7 +1,7 @@
 import json
 from flask import Blueprint, jsonify, request, current_app
 
-from ai_models import create_chained_response
+from ai_models import generate_response_with_context
 
 
 api_routes = Blueprint("api_routes", __name__)
@@ -15,25 +15,21 @@ def generate():
     for key in ["model", "prompt", "nodeId"]:
         if key not in data:
             return jsonify({"error": f"{key} is required"}), 400
-        
-    prev_chat_responses = []
-    parent_node_ids = [node["id"] for node in data.get("parentNodes", [])]
-    for index, parent_node_id in enumerate(parent_node_ids):
-        if r.exists(f"node:{parent_node_id}"):
-            prev_chat_response = r.hget(f"node:{parent_node_id}", "prompt_response").decode('utf-8')
-            prev_chat_responses.append(f"Response {index+1}: {prev_chat_response}")
 
     try:
-        prompt_response = create_chained_response(
+        prompt_response = generate_response_with_context(
             model=model,
-            prev_chat_responses=prev_chat_responses,
             prompt=prompt,
+            redis=r,
+            parentNodes=data.get("parentNodes", [])
         )
 
-        r.hset(f"node:{node_id}", "model", model)
-        r.hset(f"node:{node_id}", "prompt", prompt)
-        r.hset(f"node:{node_id}", "prompt_response", prompt_response["text"])
-        r.hset(f"node:{node_id}", "parent_ids", json.dumps(parent_node_ids))
+        r.hset(f"node:{node_id}", mapping={
+            "model": model,
+            "prompt": prompt,
+            "prompt_response": prompt_response["text"],
+            "parent_ids": json.dumps([parent["id"] for parent in data.get("parentNodes", [])])
+        })
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:

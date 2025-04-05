@@ -32,24 +32,39 @@ gpt_4o_chain = LLMChain(llm=gpt_4o_model, prompt=prompt_template)
 sonnet_chain = LLMChain(llm=claude_sonnet_model, prompt=prompt_template)
 
 
-def create_chained_response(
+def get_parent_responses(redis, parentNodes) -> list:
+    prev_chat_responses = []
+    for index, node in enumerate(parentNodes):
+        if redis.exists(f"node:{node['id']}"):
+            prompt_response = redis.hget(f"node:{node['id']}", "prompt_response").decode('utf-8')
+            prev_chat_responses.append(f"Response {index+1}: {prompt_response}")
+    return prev_chat_responses
+
+
+def generate_response_with_context(
         model: str,
-        prev_chat_responses: list,
         prompt: str,
-) -> str:
-    context = "\n\n".join(prev_chat_responses)
+        redis,
+        parentNodes: list,
+):
+    parent_responses = get_parent_responses(redis, parentNodes)
+    context = "\n\n".join(parent_responses)
 
     if model == "gpt-4o":
-        chained_response = gpt_4o_chain.invoke({
+        response_with_context = gpt_4o_chain.invoke({
             "context": context,
             "prompt": prompt
         })
     elif model == "claude-sonnet":
-        chained_response = sonnet_chain.invoke({
+        response_with_context = sonnet_chain.invoke({
             "context": context,
             "prompt": prompt
         })
     else:
         raise ValueError(f"Unsupported model type: {model}")
         
-    return chained_response
+    return response_with_context
+
+
+def generate_chained_responses():
+    pass
