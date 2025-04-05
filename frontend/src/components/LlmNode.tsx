@@ -147,7 +147,7 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
 
     const renderHeaders = () => (
         <>
-            <svg className="cursor-move absolute top-[-26px] left-[30px] w-[30px] h-[20px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0">
+            <svg className="cursor-move absolute top-[-26px] left-[30px] w-[30px] h-[20px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20" fill="none">
                 <circle cx="5" cy="5" r="3.5" fill="#000000" />
                 <circle cx="15" cy="5" r="3.5" fill="#000000" />
                 <circle cx="25" cy="5" r="3.5" fill="#000000" />
