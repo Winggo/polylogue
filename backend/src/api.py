@@ -17,18 +17,19 @@ def generate():
             return jsonify({"error": f"{key} is required"}), 400
 
     try:
+        parent_node_ids = [parent["id"] for parent in data.get("parentNodes", [])]
         prompt_response = generate_response_with_context(
             model=model,
             prompt=prompt,
             redis=r,
-            parentNodes=data.get("parentNodes", [])
+            parent_node_ids=parent_node_ids
         )
 
         r.hset(f"node:{node_id}", mapping={
             "model": model,
             "prompt": prompt,
             "prompt_response": prompt_response["text"],
-            "parent_ids": json.dumps([parent["id"] for parent in data.get("parentNodes", [])])
+            "parent_ids": json.dumps(parent_node_ids or []),
         })
     except ValueError as e:
         return jsonify({"error": str(e)}), 400

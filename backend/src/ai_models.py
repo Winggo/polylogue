@@ -1,3 +1,4 @@
+import json
 import os
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
@@ -15,7 +16,7 @@ claude_sonnet_model = ChatAnthropic(
 )
 
 
-prompt_template = PromptTemplate(
+context_prompt_template = PromptTemplate(
     input_variables=["context", "prompt"],
     template="""Given the following context and prompt, please provide a response in less than 120 words.
     Do not mention the response name or the context name in your response.
@@ -28,15 +29,11 @@ prompt_template = PromptTemplate(
 )
 
 
-gpt_4o_chain = LLMChain(llm=gpt_4o_model, prompt=prompt_template)
-sonnet_chain = LLMChain(llm=claude_sonnet_model, prompt=prompt_template)
-
-
-def get_parent_responses(redis, parentNodes) -> list:
+def get_parent_responses(redis, parent_node_ids) -> list:
     prev_chat_responses = []
-    for index, node in enumerate(parentNodes):
-        if redis.exists(f"node:{node['id']}"):
-            prompt_response = redis.hget(f"node:{node['id']}", "prompt_response").decode('utf-8')
+    for index, node_id in enumerate(parent_node_ids):
+        if redis.exists(f"node:{node_id}"):
+            prompt_response = redis.hget(f"node:{node_id}", "prompt_response").decode('utf-8')
             prev_chat_responses.append(f"Response {index+1}: {prompt_response}")
     return prev_chat_responses
 
@@ -45,23 +42,24 @@ def generate_response_with_context(
         model: str,
         prompt: str,
         redis,
-        parentNodes: list,
+        parent_node_ids: list,
 ):
-    parent_responses = get_parent_responses(redis, parentNodes)
+    parent_responses = get_parent_responses(redis, parent_node_ids)
     context = "\n\n".join(parent_responses)
 
     if model == "gpt-4o":
-        response_with_context = gpt_4o_chain.invoke({
-            "context": context,
-            "prompt": prompt
-        })
+        llm = gpt_4o_model
     elif model == "claude-sonnet":
-        response_with_context = sonnet_chain.invoke({
-            "context": context,
-            "prompt": prompt
-        })
+        llm = claude_sonnet_model
     else:
         raise ValueError(f"Unsupported model type: {model}")
+
+    chain = LLMChain(llm=llm, prompt=context_prompt_template)
+
+    response_with_context = chain.invoke({
+        "context": context,
+        "prompt": prompt
+    })
         
     return response_with_context
 
