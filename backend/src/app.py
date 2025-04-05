@@ -1,14 +1,12 @@
 import json
-import os
+from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from flask_socketio import SocketIO, emit
-from langchain_openai import ChatOpenAI
-from langchain_anthropic import ChatAnthropic
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
-import redis
-from dotenv import load_dotenv
+from flask_socketio import SocketIO
+
+from redis_listener import start_redis_client
+from ai_models import create_chained_response
+
 
 load_dotenv()
 
@@ -16,61 +14,42 @@ app = Flask(__name__)
 CORS(app, supports_credentials=True)
 socketio = SocketIO(app, cors_allowed_origins='*')
 
-r = redis.Redis(host='localhost', port=6379, db=0)
-def check_redis_connection():
-    try:
-        r.ping()
-        return True
-    except redis.ConnectionError as err:
-        raise Exception(f"Failed to connect to Redis: {err}")
+r_client, pubsub = start_redis_client(socketio)
+
+
+client_subscriptions = {}
+
+@socketio.on("connect")
+def handle_connect():
+    print(f"Client {request.sid} connected")
+
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print(f"Client {request.sid} disconnected")
+
+    channels = client_subscriptions.pop(request.sid, [])
+    for channel in channels:
+        pubsub.unsubscribe(channel)
+
+
+@socketio.on("subscribe")
+def handle_redis_subscribe(channel):
+    print(f"Client {request.sid} subscribed to {channel}")
+
+    if request.sid not in client_subscriptions:
+        client_subscriptions[request.sid] = []
+    client_subscriptions[request.sid].append(channel)
+    pubsub.subscribe(channel)
+
+
+@socketio.on("unsubscribe")
+def handle_redis_unsubscribe(channel):
+    print(f"Client {request.sid} unsubscribed from {channel}")
     
-
-# Initialize LLMs
-gpt_4o_model = ChatOpenAI(
-    api_key=os.getenv("OPENAI_API_KEY"),
-    model="gpt-4o",
-)
-claude_sonnet_model = ChatAnthropic(
-    api_key=os.getenv("ANTHROPIC_API_KEY"),
-    model="claude-3-5-sonnet-20240620",
-)
-
-prompt_template = PromptTemplate(
-    input_variables=["context", "prompt"],
-    template="""Given the following context and prompt, please provide a response in less than 120 words.
-    Do not mention the response name or the context name in your response.
-    *Context:*
-    {context}
-
-    ----------------------------------------------------------------------------
-    *Prompt:*
-    {prompt}"""
-)
-
-gpt_4o_chain = LLMChain(llm=gpt_4o_model, prompt=prompt_template)
-sonnet_chain = LLMChain(llm=claude_sonnet_model, prompt=prompt_template)
-
-def create_chained_response(
-        model: str,
-        prev_chat_responses: list,
-        prompt: str,
-) -> str:
-    context = "\n\n".join(prev_chat_responses)
-
-    if model == "gpt-4o":
-        chained_response = gpt_4o_chain.invoke({
-            "context": context,
-            "prompt": prompt
-        })
-    elif model == "claude-sonnet":
-        chained_response = sonnet_chain.invoke({
-            "context": context,
-            "prompt": prompt
-        })
-    else:
-        raise ValueError(f"Unsupported model type: {model}")
-        
-    return chained_response
+    if request.sid in client_subscriptions and channel in client_subscriptions[request.sid]:
+        client_subscriptions[request.sid].remove(channel)
+        pubsub.unsubscribe(channel)
 
 
 @app.route("/api/generate", methods=["POST"])
@@ -84,11 +63,10 @@ def generate():
     prev_chat_responses = []
     parent_node_ids = [node["id"] for node in data.get("parentNodes", [])]
     for index, parent_node_id in enumerate(parent_node_ids):
-        if r.exists(f"node:{parent_node_id}"):
-            prev_chat_response = r.hget(f"node:{parent_node_id}", "prompt_response").decode('utf-8')
+        if r_client.exists(f"node:{parent_node_id}"):
+            prev_chat_response = r_client.hget(f"node:{parent_node_id}", "prompt_response").decode('utf-8')
             prev_chat_responses.append(f"Response {index+1}: {prev_chat_response}")
 
-    
     try:
         prompt_response = create_chained_response(
             model=model,
@@ -96,10 +74,10 @@ def generate():
             prompt=prompt,
         )
 
-        r.hset(f"node:{node_id}", "model", model)
-        r.hset(f"node:{node_id}", "prompt", prompt)
-        r.hset(f"node:{node_id}", "prompt_response", prompt_response["text"])
-        r.hset(f"node:{node_id}", "parent_ids", json.dumps(parent_node_ids))
+        r_client.hset(f"node:{node_id}", "model", model)
+        r_client.hset(f"node:{node_id}", "prompt", prompt)
+        r_client.hset(f"node:{node_id}", "prompt_response", prompt_response["text"])
+        r_client.hset(f"node:{node_id}", "parent_ids", json.dumps(parent_node_ids))
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:
@@ -108,11 +86,5 @@ def generate():
     return jsonify({"response": prompt_response["text"]})
 
 
-@socketio.on("update_node")
-def handle_update(data):
-    emit("node_updated", data, broadcast=True)
-
-
 if __name__ == "__main__":
-    check_redis_connection()
     socketio.run(app, debug=True)

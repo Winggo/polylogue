@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react"
+import { io } from 'socket.io-client'
 import {
     Handle,
     Position,
@@ -9,6 +10,8 @@ import {
 } from '@xyflow/react'
 
 import LoadingWheel from "../icons/LoadingWheel"
+
+const backendServerURL = 'http://127.0.0.1:5000'
 
 export type LLMNodeProps = {
     id: string
@@ -41,6 +44,21 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
     )
 
     useEffect(() => {
+        const socket = io(backendServerURL)
+
+        const handleUpdate = (promptResponse: string) => {
+            setPromptResponse(promptResponse);
+        };
+    
+        socket.on(`node:${nodeId}:update`, handleUpdate)
+
+        return () => {
+            socket.off(`node:${nodeId}:update`, handleUpdate)
+            socket.disconnect()
+        }
+    }, [])
+
+    useEffect(() => {
         if (selected) {
             setTimeout(() => {
                 inputRef.current?.focus()
@@ -54,7 +72,7 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
         setLoading(true)
 
         try {
-            const response = await fetch("http://127.0.0.1:5000/api/generate", {
+            const response = await fetch(`${backendServerURL}/api/generate`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
