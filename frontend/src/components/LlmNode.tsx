@@ -72,7 +72,7 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
         setLoading(true)
 
         try {
-            await fetch(`${backendServerURL}/api/generate`, {
+            const response = await fetch(`${backendServerURL}/api/generate`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -85,6 +85,8 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
                 }),
                 signal: controller.signal,
             })
+            const data = await response.json()
+            setPromptResponse(data.response)
         } catch(error) {
             console.error("Error:", error)
             setPromptResponse("An error occurred. Please try again.")
