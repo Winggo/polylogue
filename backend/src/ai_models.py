@@ -93,7 +93,7 @@ def get_ancestor_nodes(redis, node_id) -> list:
 def generate_chained_responses(redis, cur_node):
     ancestor_nodes = get_ancestor_nodes(redis, cur_node["id"])
     ancestor_nodes.append(cur_node)
-    # print(f"Ancestor Nodes: {ancestor_nodes}")
+    print(f"Ancestor Nodes: {ancestor_nodes}")
 
     chains = []
     inputs_per_chain = {}
@@ -130,11 +130,11 @@ There may be multiple or no past conversations.
         inputs_per_chain[prompt_input_key] = node["prompt"]
         output_keys.append(output_key)
 
-    # print(f"Chain Prompt Input Values: {inputs_per_chain}")
-    # for chain in chains:
-    #     print(f"Chain Prompt Input Names: {chain.prompt.input_variables}")
-    #     print(f"Chain Prompt Template: {chain.prompt.template}")
-    #     print(f"Chain Output Key: {chain.output_key}\n")
+    print(f"Chain Prompt Input Values: {inputs_per_chain}")
+    for chain in chains:
+        print(f"Chain Prompt Input Names: {chain.prompt.input_variables}")
+        print(f"Chain Prompt Template: {chain.prompt.template}")
+        print(f"Chain Output Key: {chain.output_key}\n")
     
     sequential_chain = SequentialChain(
         chains=chains,
