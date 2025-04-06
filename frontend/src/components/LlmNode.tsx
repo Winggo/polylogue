@@ -46,15 +46,28 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
     
     useEffect(() => {
         if (!socket) return
-        const handleUpdate = (data: string) => {
-            const parsedData = JSON.parse(data)
-            setPromptResponse(parsedData.promptResponse)
-        }
+        const checkConnection = () => {
+            if (socket.connected) {
+                const handleUpdate = (data: { nodeId: string, promptResponse: string }) => {
+                    console.log("Received update:", nodeId, data.promptResponse)
+                    const { nodeId: msgNodeId, promptResponse } = data
+                    if (`node:${nodeId}` === msgNodeId) {
+                        setPromptResponse(decodeURIComponent(promptResponse))
+                    }
+                }
 
-        socket.on(`node:${nodeId}:update`, handleUpdate)
+                socket.on(`node:${nodeId}:update`, handleUpdate)
+                console.log("Socket connected:", nodeId, socket.connected)
+            } else {
+                console.log("Socket not connected, retrying...")
+                setTimeout(checkConnection, 1000)
+            }
+        }
+        
+        checkConnection()
 
         return () => {
-            socket.off(`node:${nodeId}:update`, handleUpdate)
+            socket.off(`node:${nodeId}:update`)
         }
     }, [])
 

@@ -57,15 +57,21 @@ def generate_chain():
             "prompt": prompt,
             "parent_ids": parent_node_ids,
         })
-        r.hset(f"node:{node_id}", mapping={
-            "model": model,
-            "prompt": prompt,
-            "parent_ids": json.dumps(parent_node_ids or []),
-        })
+        
+        pipe = r.pipeline()
         for output_key, response in chained_responses.items():
             if output_key.startswith("node-output-"):
                 key = output_key.replace("node-output-", "node:")
-                r.hset(key, "prompt_response", response)
+                if key == f"node:{node_id}":
+                    pipe.hset(f"node:{node_id}", mapping={
+                        "model": model,
+                        "prompt": prompt,
+                        "parent_ids": json.dumps(parent_node_ids or []),
+                        "prompt_response": response,
+                    })
+                else:
+                    pipe.hset(key, "prompt_response", response)
+        pipe.execute()
 
     except ValueError as e:
         return jsonify({"error": str(e)}), 400

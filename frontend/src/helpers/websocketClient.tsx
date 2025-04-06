@@ -14,6 +14,7 @@ export const WebsSocketProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         const socket = io(backendServerURL, {
             transports: ['websocket'],
+            forceNew: true,
         })
         setSocket(socket)
 
