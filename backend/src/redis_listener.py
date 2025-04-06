@@ -40,14 +40,16 @@ def redis_listener(socketio):
                     prompt_response = r_client.hget(full_key, "prompt_response").decode('utf-8')
 
                     notification_channel = f"{full_key}:update"
+
+                    message = {
+                        "nodeId": full_key,
+                        "promptResponse": prompt_response,
+                    }
                     
-                    print(f"\n{notification_channel}\n")
+                    print(f"{notification_channel}\n{prompt_response[:5]}\n\n")
                     socketio.emit(
                         notification_channel,
-                        {
-                            "nodeId": full_key,
-                            "promptResponse": prompt_response,
-                        }
+                        message,
                     )
     finally:
         pubsub.unsubscribe()
