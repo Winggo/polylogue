@@ -1,3 +1,4 @@
+import json
 import threading
 import redis
 
@@ -30,8 +31,11 @@ def redis_listener(socketio):
 
                 notification_channel = f"{full_key}:update"
                 
-                print(f"Publishing to channel {notification_channel}: {prompt_response}")
-                socketio.emit(notification_channel, prompt_response)
+                print(f"Publishing to channel {notification_channel}")
+                socketio.emit(
+                    notification_channel,
+                    json.dumps({ "promptResponse": prompt_response })
+                )
 
 
 def start_redis_client(socketio):

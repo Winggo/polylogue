@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react"
-import { io } from 'socket.io-client'
 import {
     Handle,
     Position,
@@ -9,6 +8,7 @@ import {
     type Node,
 } from '@xyflow/react'
 
+import { useWebSocket } from '../helpers/websocketClient'
 import LoadingWheel from "../icons/LoadingWheel"
 
 const backendServerURL = 'http://127.0.0.1:5000'
@@ -29,7 +29,7 @@ const modelMapping = {
     "claude-sonnet": "Claude 3.5 Sonnet",
 }
 
-export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
+export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
     const inputRef = useRef<HTMLTextAreaElement>(null)
     const [model, setModel] = useState<keyof typeof modelMapping>(initalModel)
     const [prompt, setPrompt] = useState("")
@@ -42,19 +42,19 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
     const parentNodes = useNodesData<Node>(
         connections.map((connection) => connection.source),
     )
-
-    useEffect(() => {
-        const socket = io(backendServerURL)
-
-        const handleUpdate = (promptResponse: string) => {
-            setPromptResponse(promptResponse);
-        };
+    const socket = useWebSocket()
     
+    useEffect(() => {
+        if (!socket) return
+        const handleUpdate = (data: string) => {
+            const parsedData = JSON.parse(data)
+            setPromptResponse(parsedData.promptResponse)
+        }
+
         socket.on(`node:${nodeId}:update`, handleUpdate)
 
         return () => {
             socket.off(`node:${nodeId}:update`, handleUpdate)
-            socket.disconnect()
         }
     }, [])
 
@@ -68,7 +68,7 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
 
     const submitPrompt = async () => {
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 5000)
+        const timeoutId = setTimeout(() => controller.abort(), 15000)
         setLoading(true)
 
         try {
@@ -186,7 +186,7 @@ export default function LLMNode ({ id: nodeId, selected, data }: LLMNodeProps) {
                     `}
                     rows={1}
                     onInput={(e) => {
-                        const target = e.target as HTMLTextAreaElement;
+                        const target = e.target as HTMLTextAreaElement
                         target.style.height = "32px"
                         target.style.height = `${target.scrollHeight}px`
                     }}
