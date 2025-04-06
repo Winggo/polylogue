@@ -46,7 +46,7 @@ def redis_listener(socketio):
                         "promptResponse": prompt_response,
                     }
                     
-                    print(f"{notification_channel}\n{prompt_response[:5]}\n\n")
+                    print(f"{notification_channel}\n{prompt_response}\n\n")
                     socketio.emit(
                         notification_channel,
                         message,

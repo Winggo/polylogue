@@ -93,7 +93,6 @@ def get_ancestor_nodes(redis, node_id) -> list:
 def generate_chained_responses(redis, cur_node):
     ancestor_nodes = get_ancestor_nodes(redis, cur_node["id"])
     ancestor_nodes.append(cur_node)
-    print(f"Ancestor Nodes: {ancestor_nodes}")
 
     chains = []
     inputs_per_chain = {}
