@@ -46,13 +46,18 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
     
     useEffect(() => {
         if (!socket) return
+
+        if (!socket.connected) {
+            socket.connect()
+        }
+
         const checkConnection = () => {
             if (socket.connected) {
                 const handleUpdate = (data: { nodeId: string, promptResponse: string }) => {
-                    console.log("Received update:", nodeId, data.promptResponse)
                     const { nodeId: msgNodeId, promptResponse } = data
+                    console.log("Received update:", msgNodeId, nodeId, promptResponse)
                     if (`node:${nodeId}` === msgNodeId) {
-                        setPromptResponse(decodeURIComponent(promptResponse))
+                        setPromptResponse(promptResponse)
                     }
                 }
 
@@ -68,6 +73,7 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
 
         return () => {
             socket.off(`node:${nodeId}:update`)
+            socket.disconnect()
         }
     }, [])
 
