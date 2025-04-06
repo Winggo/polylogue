@@ -3,7 +3,7 @@ import os
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+from langchain.chains import LLMChain, SequentialChain
 
 
 gpt_4o_model = ChatOpenAI(
@@ -18,14 +18,14 @@ claude_sonnet_model = ChatAnthropic(
 
 context_prompt_template = PromptTemplate(
     input_variables=["context", "prompt"],
-    template="""Given the following context and prompt, please provide a response in less than 120 words.
-    Do not mention the response name or the context name in your response.
-    *Context:*
-    {context}
+    template="""Given the following context and prompt, reply thoughtfully in less than 120 words.
+There may be no context provided. Do not mention the response name or the context name in your response.
+*Context:*
+{context}
 
-    ----------------------------------------------------------------------------
-    *Prompt:*
-    {prompt}"""
+----------------------------------------------------------------------------
+*Prompt:*
+{prompt}"""
 )
 
 
@@ -64,5 +64,83 @@ def generate_response_with_context(
     return response_with_context
 
 
-def generate_chained_responses():
-    pass
+def get_ancestor_nodes(redis, node_id) -> list:
+    """Get all ancestor nodes for a given node_id, including the node itself"""
+    def get_parent_nodes(node_id)->None:
+        if node_id in visited_node_ids or not redis.exists(f"node:{node_id}"):
+            return
+        visited_node_ids.add(node_id)
+        cur_node = redis.hgetall(f"node:{node_id}")
+        decoded_cur_node = {
+            k.decode('utf-8') : v.decode('utf-8')
+            for k, v in cur_node.items()
+            if k.decode('utf-8') in {"model", "prompt", "parent_ids"}
+        }
+        decoded_cur_node["id"] = node_id
+        decoded_cur_node["parent_ids"] = json.loads(decoded_cur_node["parent_ids"])
+        for parent_id in decoded_cur_node["parent_ids"]:
+            get_parent_nodes(parent_id)
+        # append node after so that root node is always first
+        ancestor_nodes.append(decoded_cur_node)
+
+    visited_node_ids = set()
+    ancestor_nodes = []
+    get_parent_nodes(node_id)
+    ancestor_nodes.pop()
+    return ancestor_nodes
+    
+
+def generate_chained_responses(redis, cur_node):
+    ancestor_nodes = get_ancestor_nodes(redis, cur_node["id"])
+    ancestor_nodes.append(cur_node)
+    # print(f"Ancestor Nodes: {ancestor_nodes}")
+
+    chains = []
+    inputs_per_chain = {}
+    output_keys = []
+    for node in ancestor_nodes:
+        if node["model"] == "claude-sonnet":
+            llm = claude_sonnet_model
+        else:
+            llm = gpt_4o_model
+
+        prompt_input_key = f"node-input-prompt-{node['id']}"
+        output_key = f"node-output-{node['id']}"
+        parent_outputs = [f"node-output-{parent_id}" for parent_id in node['parent_ids']]
+
+        template = """Given the past dialog and prompt, reply thoughtfully in less than 120 words.
+There may be multiple or no past conversations.
+*Past Conversations:*\n"""
+        for parent_output in parent_outputs:
+            template += "Conversation: {" + parent_output + "}\n\n"
+        template += """----------------------------------------------------------------------------
+*Prompt:*\n""" + "{" + prompt_input_key + "}"
+
+        prompt_template = PromptTemplate(
+            input_variables=parent_outputs + [prompt_input_key],
+            template=template,
+        )
+        chains.append(
+            LLMChain(
+                llm=llm,
+                prompt=prompt_template,
+                output_key=output_key
+            )
+        )
+        inputs_per_chain[prompt_input_key] = node["prompt"]
+        output_keys.append(output_key)
+
+    # print(f"Chain Prompt Input Values: {inputs_per_chain}")
+    # for chain in chains:
+    #     print(f"Chain Prompt Input Names: {chain.prompt.input_variables}")
+    #     print(f"Chain Prompt Template: {chain.prompt.template}")
+    #     print(f"Chain Output Key: {chain.output_key}\n")
+    
+    sequential_chain = SequentialChain(
+        chains=chains,
+        input_variables=list(inputs_per_chain.keys()),
+        output_variables=output_keys,
+    )
+    chained_result = sequential_chain.invoke(inputs_per_chain)
+
+    return chained_result
