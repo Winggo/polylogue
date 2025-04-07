@@ -6,7 +6,7 @@ from ai_models import generate_response_with_context, generate_chained_responses
 
 api_routes = Blueprint("api_routes", __name__)
 
-@api_routes.route("/generate", methods=["POST"])
+@api_routes.route("/v1/generate", methods=["POST"])
 def generate():
     r = current_app.config['REDIS']
 
@@ -39,7 +39,7 @@ def generate():
     return jsonify({"response": prompt_response["text"]})
 
 
-@api_routes.route("generate-chain", methods=["POST"])
+@api_routes.route("/v1/generate-chain", methods=["POST"])
 def generate_chain():
     r = current_app.config['REDIS']
 

@@ -56,7 +56,7 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
         setLoading(true)
 
         try {
-            const response = await fetch(`${backendServerURL}/api/generate`, {
+            const response = await fetch(`${backendServerURL}/api/v1/generate`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
