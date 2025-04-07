@@ -32,6 +32,7 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
     const inputRef = useRef<HTMLTextAreaElement>(null)
     const [model, setModel] = useState<keyof typeof modelMapping>(initalModel)
     const [prompt, setPrompt] = useState("")
+    const [promptPlaceholder, setPromptPlaceholder] = useState("")
     const [promptResponse , setPromptResponse] = useState("")
     const [loading, setLoading] = useState(false)
     const [isHovered, setIsHovered] = useState(false)
@@ -41,6 +42,33 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
     const parentNodes = useNodesData<Node>(
         connections.map((connection) => connection.source),
     )
+
+    const fetchPrompt = async (signal: AbortSignal ) => {
+        try {
+            const response = await fetch(`${backendServerURL}/api/v1/generate-prompt`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    parentNodes,
+                }),
+                signal,
+            })
+            const data = await response.json()
+            setPromptPlaceholder(data.prompt)
+        } catch (error) {
+        }
+    }
+
+    useEffect(() => {
+        const controller = new AbortController()
+        const signal = controller.signal
+        fetchPrompt(signal)
+        return () => {
+            controller.abort()
+        }
+    }, [])
 
     useEffect(() => {
         if (selected) {
@@ -149,7 +177,7 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
             <div className="flex justify-between">
                 <textarea
                     ref={inputRef}
-                    placeholder="What is your prompt?"
+                    placeholder={promptPlaceholder}
                     value={prompt}
                     onChange={handleInputChange}
                     onKeyDown={(e) => {
@@ -158,6 +186,9 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
                             if (prompt !== "") {
                                 submitPrompt()
                             }
+                        } else if (e.key === "Tab" && prompt === "") {
+                            e.preventDefault()
+                            setPrompt(promptPlaceholder)
                         }
                     }}
                     className={`
@@ -204,7 +235,9 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
                         <br />
                         - write a love letter 🌹
                     </div>
-                    <div className="cursor-text select-text">
+                    <div className="cursor-text select-text text-center">
+                        Press ⇥ to use suggested prompt
+                        <br />
                         Press ⌫ to delete this node
                     </div>
                 </div>

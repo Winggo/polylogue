@@ -11,7 +11,7 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
-socketio = SocketIO(app, cors_allowed_origins='*')
+socketio = SocketIO(app, cors_allowed_origins='*', transports=['websocket'])
 r_client = start_redis_client()
 app.config['REDIS'] = r_client
 

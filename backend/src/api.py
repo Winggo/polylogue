@@ -1,13 +1,33 @@
 import json
 from flask import Blueprint, jsonify, request, current_app
 
-from ai_models import generate_response_with_context, generate_chained_responses
+from ai_models import (
+    generate_prompt_question,
+    generate_response_with_context,
+    generate_chained_responses,
+)
 
 
 api_routes = Blueprint("api_routes", __name__)
 
+
+@api_routes.route("/v1/generate-prompt", methods=["POST"])
+def generate_prompt():
+    """Generate a prompt, given context"""
+    r = current_app.config['REDIS']
+    data = request.json
+
+    try:
+        prompt_question = generate_prompt_question(r, data.get("parentNodes", []))
+    except Exception as e:
+        return jsonify({"error": "Internal Server Error"}), 500
+    
+    return jsonify({"prompt": prompt_question["text"]}), 200
+
+
 @api_routes.route("/v1/generate", methods=["POST"])
 def generate():
+    """Generate prompt response, given a prompt"""
     r = current_app.config['REDIS']
 
     data = request.json
@@ -32,15 +52,16 @@ def generate():
             "prompt_response": prompt_response["text"],
         })
     except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": "Input Error"}), 400
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Internal Server Error"}), 500
     
-    return jsonify({"response": prompt_response["text"]})
+    return jsonify({"response": prompt_response["text"]}), 200
 
 
 @api_routes.route("/v1/generate-chain", methods=["POST"])
 def generate_chain():
+    """Given chain prompt responses, given a prompt"""
     r = current_app.config['REDIS']
 
     data = request.json
@@ -74,8 +95,8 @@ def generate_chain():
         pipe.execute()
 
     except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": "Input Error"}), 400
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Internal Server Error"}), 500
 
-    return jsonify({"response": chained_responses[f"node-output-{node_id}"]})
+    return jsonify({"response": chained_responses[f"node-output-{node_id}"]}), 200

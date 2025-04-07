@@ -16,6 +16,16 @@ claude_sonnet_model = ChatAnthropic(
 )
 
 
+context_prompt_question_template = PromptTemplate(
+    input_variables=["context"],
+    template="""Given the following context, generate a thoughtful follow up question intended to trigger the user's curisoity.
+If there is no context provided, generate a question users may be curious to know the answer to.
+Keep this question no longer than 8 words. Always end the question with a question mark.
+*Context:*
+{context}"""
+)
+
+
 context_prompt_template = PromptTemplate(
     input_variables=["context", "prompt"],
     template="""Given the following context and prompt, reply thoughtfully in less than 120 words.
@@ -29,13 +39,27 @@ There may be no context provided. Do not mention the response name or the contex
 )
 
 
-def get_parent_responses(redis, parent_node_ids) -> list:
+def get_parent_responses(redis, parent_node_ids=None, parent_nodes=None) -> list:
+    parent_node_ids, parent_nodes = parent_node_ids or [], parent_nodes or []
+    if not parent_node_ids and parent_nodes:
+        parent_node_ids = [parent["id"] for parent in parent_nodes]
     prev_chat_responses = []
     for index, node_id in enumerate(parent_node_ids):
         if redis.exists(f"node:{node_id}"):
             prompt_response = redis.hget(f"node:{node_id}", "prompt_response").decode('utf-8')
             prev_chat_responses.append(f"Response {index+1}: {prompt_response}")
     return prev_chat_responses
+
+
+def generate_prompt_question(redis, parent_nodes):
+    """Generate a prompt suggestion"""
+    parent_responses = get_parent_responses(redis, parent_nodes=parent_nodes)
+    context = "\n\n".join(parent_responses)
+
+    chain = LLMChain(llm=gpt_4o_model, prompt=context_prompt_question_template)
+    prompt_question = chain.invoke({ "context": context })
+    
+    return prompt_question
 
 
 def generate_response_with_context(
