@@ -32,6 +32,7 @@ const modelMapping = {
 export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
     const inputRef = useRef<HTMLTextAreaElement>(null)
     const [model, setModel] = useState<keyof typeof modelMapping>(initalModel)
+    const [promptPlaceholder, setPromptPlaceholder] = useState("What is your prompt?")
     const [prompt, setPrompt] = useState("")
     const [promptResponse , setPromptResponse] = useState("")
     const [loading, setLoading] = useState(false)
@@ -184,7 +185,7 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
             <div className="flex justify-between">
                 <textarea
                     ref={inputRef}
-                    placeholder="What is your prompt?"
+                    placeholder={promptPlaceholder}
                     value={prompt}
                     onChange={handleInputChange}
                     onKeyDown={(e) => {
