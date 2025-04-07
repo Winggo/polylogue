@@ -8,7 +8,6 @@ import {
     type Node,
 } from '@xyflow/react'
 
-import { useWebSocket } from '../helpers/websocketClient'
 import LoadingWheel from "../icons/LoadingWheel"
 
 const backendServerURL = 'http://127.0.0.1:5000'
@@ -42,40 +41,6 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
     const parentNodes = useNodesData<Node>(
         connections.map((connection) => connection.source),
     )
-    const socket = useWebSocket()
-    
-    useEffect(() => {
-        if (!socket) return
-
-        if (!socket.connected) {
-            socket.connect()
-        }
-
-        const checkConnection = () => {
-            if (socket.connected) {
-                const handleUpdate = (data: { nodeId: string, promptResponse: string }) => {
-                    const { nodeId: msgNodeId, promptResponse } = data
-                    console.log("Received update:", msgNodeId, nodeId, promptResponse)
-                    if (`node:${nodeId}` === msgNodeId) {
-                        setPromptResponse(promptResponse)
-                    }
-                }
-
-                socket.on(`node:${nodeId}:update`, handleUpdate)
-                console.log("Socket connected:", nodeId, socket.connected)
-            } else {
-                console.log("Socket not connected, retrying...")
-                setTimeout(checkConnection, 1000)
-            }
-        }
-        
-        checkConnection()
-
-        return () => {
-            socket.off(`node:${nodeId}:update`)
-            socket.disconnect()
-        }
-    }, [])
 
     useEffect(() => {
         if (selected) {
