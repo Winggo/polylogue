@@ -2,39 +2,44 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 
+import { WebSocketProvider } from '../helpers/websocketClient'
+
+
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+    variable: "--font-geist-sans",
+    subsets: ["latin"],
 })
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+    variable: "--font-geist-mono",
+    subsets: ["latin"],
 })
 
 export const metadata: Metadata = {
-  title: "Polylogue",
-  description: "Enable parallel LLM dialogs",
-  icons: {
-    icon: '/favicon.ico',
-  },
+    title: "Polylogue",
+    description: "Enable parallel LLM dialogs",
+    icons: {
+        icon: '/favicon.ico',
+    },
 }
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode
+    children: React.ReactNode
 }>) {
-  return (
-    <html lang="en">
-      <head>
-        <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
-      </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  )
+    return (
+        <html lang="en">
+            <head>
+                <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
+            </head>
+            <body
+                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            >
+                <WebSocketProvider>
+                    {children}
+                </WebSocketProvider>
+            </body>
+        </html>
+    )
 }

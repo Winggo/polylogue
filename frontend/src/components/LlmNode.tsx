@@ -12,7 +12,7 @@ import LoadingWheel from "../icons/LoadingWheel"
 
 const backendServerURL = 'http://127.0.0.1:5000'
 
-export type LLMNodeProps = {
+type LLMNodeProps = {
     id: string
     selected: boolean
     data: Record<string, any>

@@ -2,7 +2,6 @@
 
 import React, { useCallback } from 'react'
 import {
-    ReactFlowProvider,
     ReactFlow,
     Background,
     Controls,
@@ -43,8 +42,12 @@ const initialNodes = [
     },
 ]
 
+type FlowProps = {
+    canvasId?: string,
+}
 
-export default function Flow() {
+
+export default function Flow({ canvasId }: FlowProps) {
     const [nodes, setNodes, onNodesChange] = useNodesState<Node>(initialNodes)
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
     const { screenToFlowPosition } = useReactFlow()
@@ -94,25 +97,23 @@ export default function Flow() {
     )
 
     return (
-        <ReactFlowProvider>
-            <div className="h-screen w-screen bg-gray-200">
-                <ReactFlow
-                    nodes={nodes}
-                    edges={edges}
-                    onNodesChange={onNodesChange}
-                    onEdgesChange={onEdgesChange}
-                    onConnect={onConnect}
-                    onConnectEnd={onConnectEnd}
-                    preventScrolling={false}
-                    nodeTypes={nodeTypes}
-                    defaultEdgeOptions={{ style: edgeStyles}}
-                    connectionLineStyle={edgeStyles}
-                >
-                    <Background gap={25} />
-                    <Controls position="top-right" showInteractive={true} />
-                    <ViewportInfo />
-                </ReactFlow>
-            </div>
-        </ReactFlowProvider>
+        <div className="h-screen w-screen bg-gray-200">
+            <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                onConnectEnd={onConnectEnd}
+                preventScrolling={false}
+                nodeTypes={nodeTypes}
+                defaultEdgeOptions={{ style: edgeStyles}}
+                connectionLineStyle={edgeStyles}
+            >
+                <Background gap={25} />
+                <Controls position="top-right" showInteractive={true} />
+                <ViewportInfo canvasId={canvasId} />
+            </ReactFlow>
+        </div>
     )
 }

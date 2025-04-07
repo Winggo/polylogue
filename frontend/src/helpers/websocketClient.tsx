@@ -8,7 +8,7 @@ const WebSocketContext = createContext<Socket | null>(null)
 const backendServerURL = 'http://127.0.0.1:5000'
 
 
-export const WebsSocketProvider = ({ children }: { children: ReactNode }) => {
+export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
     const [socket, setSocket] = useState<Socket | null>(null)
     
     useEffect(() => {
