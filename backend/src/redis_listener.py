@@ -1,19 +1,14 @@
 import gc
 import signal
-import json
 import threading
 import redis
 
 
-r_client = redis.Redis(host='localhost', port=6379, db=0)
-pubsub = r_client.pubsub()
-r_client.config_set('notify-keyspace-events', 'KEh')
-
-stop_signal = threading.Event()
 redis_thread = None
+stop_signal = threading.Event()
 
 
-def check_redis_connection():
+def check_redis_connection(r_client):
     try:
         r_client.ping()
         return True
@@ -21,7 +16,7 @@ def check_redis_connection():
         raise Exception(f"Failed to connect to Redis: {err}")
 
 
-def redis_listener(socketio):
+def redis_listener(socketio, r_client, pubsub, stop_signal):
     """Background thread that subscribes to Redis and forwards messages to Socket.IO clients"""
     pubsub.psubscribe('__keyspace@0__:node:*')
 
@@ -57,13 +52,13 @@ def redis_listener(socketio):
         print("Redis pubsub connection closed.")
 
 
-def start_redis_client(socketio):
-    check_redis_connection()
+def start_redis_client():
+    r_client = redis.Redis(host='localhost', port=6379, db=0)
+    r_client.config_set('notify-keyspace-events', 'KEh')
 
-    redis_thread = threading.Thread(target=redis_listener, args=(socketio, ), daemon=True)
-    redis_thread.start()
+    check_redis_connection(r_client)
 
-    return r_client, pubsub
+    return r_client
 
 
 # Graceful shutdown handler
@@ -71,11 +66,24 @@ def handle_sigint(signal, frame):
     print("Caught SIGINT, shutting down gracefully...")
     stop_signal.set()
     if redis_thread:
-        redis_thread.join()  # Wait for the redis thread to finish
+        redis_thread.join(timeout=5)  # Wait for the redis thread to finish
         print("Redis thread stopped.")
 
     gc.collect()
     exit(0)
 
-# Register the signal handler for SIGINT (Ctrl+C)
-signal.signal(signal.SIGINT, handle_sigint)
+
+def start_redis_pubsub(r_client, socketio):
+    print("Starting Redis PubSub...")
+    check_redis_connection(r_client)
+    stop_signal.clear()
+
+    pubsub = r_client.pubsub()
+
+    redis_thread = threading.Thread(target=redis_listener, args=(socketio, r_client, pubsub, stop_signal, ), daemon=True)
+    redis_thread.start()
+
+    # Register the signal handler for SIGINT (Ctrl+C)
+    signal.signal(signal.SIGINT, handle_sigint)
+
+    return pubsub
