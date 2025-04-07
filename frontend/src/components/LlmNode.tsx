@@ -30,18 +30,33 @@ const modelMapping = {
 
 export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
     const inputRef = useRef<HTMLTextAreaElement>(null)
+
+    const [placeholder, setPlaceholder] = useState("")
+    const [curPlaceholder, setCurPlaceholder] = useState("")
+    const [placeholderIndex, setPlaceholderIndex] = useState(0)
+
     const [model, setModel] = useState<keyof typeof modelMapping>(initalModel)
     const [prompt, setPrompt] = useState("")
-    const [placeholder, setPlaceholder] = useState("")
-    const [promptResponse , setPromptResponse] = useState("")
+    
+    const [promptResponse, setPromptResponse] = useState("")
+
     const [loading, setLoading] = useState(false)
     const [isHovered, setIsHovered] = useState(false)
+
     const connections = useNodeConnections({
         handleType: 'target',
     })
     const parentNodes = useNodesData<Node>(
         connections.map((connection) => connection.source),
     )
+
+    useEffect(() => {
+        if (selected) {
+            setTimeout(() => {
+                inputRef.current?.focus()
+            }, 0)
+        }
+    }, [])
 
     const fetchPrompt = async (signal: AbortSignal ) => {
         try {
@@ -55,13 +70,14 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
                 }),
                 signal,
             })
-            const data = await response.json()
-            setPlaceholder(data.prompt)
+            const { prompt } = await response.json()
+            setPlaceholder(prompt)
         } catch (error) {
         }
     }
 
     useEffect(() => {
+        // Prevent fetching prompt question twice
         const controller = new AbortController()
         const signal = controller.signal
         fetchPrompt(signal)
@@ -71,12 +87,16 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
     }, [])
 
     useEffect(() => {
-        if (selected) {
-            setTimeout(() => {
-                inputRef.current?.focus()
-            }, 0)
+        if (placeholder && placeholderIndex < placeholder.length) {
+            const timer = setTimeout(() => {
+                setCurPlaceholder(curPlaceholder + placeholder[placeholderIndex])
+                setPlaceholderIndex(placeholderIndex + 1)
+            }, 20)
+            return () => {
+                clearTimeout(timer)
+            }
         }
-    }, [])
+    }, [curPlaceholder, placeholderIndex, placeholder])
 
     const submitPrompt = async () => {
         const controller = new AbortController()
@@ -177,7 +197,7 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
             <div className="flex justify-between">
                 <textarea
                     ref={inputRef}
-                    placeholder={placeholder}
+                    placeholder={curPlaceholder}
                     value={prompt}
                     onChange={handleInputChange}
                     onKeyDown={(e) => {
