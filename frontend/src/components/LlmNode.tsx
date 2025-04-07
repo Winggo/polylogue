@@ -32,7 +32,7 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
     const inputRef = useRef<HTMLTextAreaElement>(null)
     const [model, setModel] = useState<keyof typeof modelMapping>(initalModel)
     const [prompt, setPrompt] = useState("")
-    const [promptPlaceholder, setPromptPlaceholder] = useState("")
+    const [placeholder, setPlaceholder] = useState("")
     const [promptResponse , setPromptResponse] = useState("")
     const [loading, setLoading] = useState(false)
     const [isHovered, setIsHovered] = useState(false)
@@ -56,7 +56,7 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
                 signal,
             })
             const data = await response.json()
-            setPromptPlaceholder(data.prompt)
+            setPlaceholder(data.prompt)
         } catch (error) {
         }
     }
@@ -177,7 +177,7 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
             <div className="flex justify-between">
                 <textarea
                     ref={inputRef}
-                    placeholder={promptPlaceholder}
+                    placeholder={placeholder}
                     value={prompt}
                     onChange={handleInputChange}
                     onKeyDown={(e) => {
@@ -188,7 +188,7 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
                             }
                         } else if (e.key === "Tab" && prompt === "") {
                             e.preventDefault()
-                            setPrompt(promptPlaceholder)
+                            setPrompt(placeholder)
                         }
                     }}
                     className={`
