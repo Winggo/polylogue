@@ -4,8 +4,8 @@ export default function RightArrowCircle () {
     const [fill, setFill] = useState("fill-gray-000")
 
     return (
-        <div onMouseEnter={() => setFill("fill-gray-200")} onMouseLeave={() => setFill("fill-gray-000")}>
-            <svg fill="#000000" className="pointer-events-none cursor-pointer" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 31.334 31.334" xmlSpace="preserve">
+        <div className="pointer-events-none cursor-pointer" onMouseEnter={() => setFill("fill-gray-200")} onMouseLeave={() => setFill("fill-gray-000")}>
+            <svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 31.334 31.334" xmlSpace="preserve">
                 <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
                 <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
                 <g id="SVGRepo_iconCarrier">
