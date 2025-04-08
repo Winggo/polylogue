@@ -53,8 +53,12 @@ body {
     color: black !important;
 }
 
-/* LLM markdown output */
+/* LLM node */
 .prompt-output p,
 .prompt-output li {
     margin-bottom: 10px;
+}
+
+.llm-node-card div span {
+    line-height: 26px;
 }
