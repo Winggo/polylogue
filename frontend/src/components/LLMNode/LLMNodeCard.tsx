@@ -13,11 +13,13 @@ export default function LLMNodeCard() {
                 - write a love letter 🌹
             </div>
             <div className="cursor-text select-text text-center">
+                Click on → icon and drag to create node
+                <br />
                 Click on ⋮⋮⋮ and drag to move node
                 <br />
                 Press ⇥ to use suggested prompt
                 <br />
-                Press ⌫ to delete this node
+                Press ⌫ to delete selected node
             </div>
         </div>
     )

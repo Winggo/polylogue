@@ -13,6 +13,9 @@ import ReactMarkdown from 'react-markdown'
 
 import LLMNodeCard from "./LLMNodeCard"
 import LoadingWheel from "../../icons/LoadingWheel"
+import RightArrowCircle from "../../icons/RightArrowCircle"
+import DottedSquare from "../../icons/DottedSquare"
+import DownArrowCircle from "../../icons/DownArrowCircle"
 import {
     localBackendServerURL as backendServerURL,
 } from "../../utils/constants"
@@ -188,32 +191,22 @@ export default function LLMNode ({
                 type="target"
                 isConnectable
                 position={Position.Left}
-                className={`w-4 h-4 mt-[4px] rounded-lg !bg-white border-gray-800 border-2`}
+                className={`w-4 h-4 mt-[4px] rounded-lg !bg-white border-gray-800 border-2 !cursor-pointer`}
             />
             <Handle
                 id={nodeId}
                 type="source"
                 position={Position.Right}
-                className="w-4 h-4 mt-[4px] rounded-lg !bg-white border-gray-800 border-2 hover:!bg-black"
-            />
+                className="w-12 h-12 mt-[4px] rounded-lg !bg-transparent border-gray-800 !cursor-pointer"
+            >
+                <RightArrowCircle />
+            </Handle>
         </>
     )
 
     const renderHeaders = () => (
         <>
-            <svg className="cursor-move absolute top-[-48px] left-[30px] w-[30px] h-[40px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20" fill="none">
-                <circle cx="5" cy="5" r="3.5" fill="#000000" />
-                <circle cx="15" cy="5" r="3.5" fill="#000000" />
-                <circle cx="25" cy="5" r="3.5" fill="#000000" />
-                
-                <circle cx="5" cy="15" r="3.5" fill="#000000" />
-                <circle cx="15" cy="15" r="3.5" fill="#000000" />
-                <circle cx="25" cy="15" r="3.5" fill="#000000" />
-                
-                <circle cx="5" cy="25" r="3.5" fill="#000000" />
-                <circle cx="15" cy="25" r="3.5" fill="#000000" />
-                <circle cx="25" cy="25" r="3.5" fill="#000000" />
-            </svg>
+            <DottedSquare />
             <div className="absolute top-[-26px] right-[30px] w-[150px] h-[20px] text-black pointer-events-none text-right">{modelMapping[model]}</div>
         </>
     )
@@ -252,11 +245,7 @@ export default function LLMNode ({
                         target.style.height = `${target.scrollHeight}px`
                     }}
                 ></textarea>
-                {(selected || isHovered) ? <svg onClick={(e) => submitPrompt()} xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-circle-arrow-down rounded-full bg-background-opaque-white stroke-text-dark transition-all hover:stroke-gray-600 duration-300 cursor-pointer rotate-180 ${loading && "stroke-gray-600"}`}>
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="m16 12-4-4-4 4"></path>
-                    <path d="M12 16V8"></path>
-                </svg> : <div className="h-[32px] w-[32px]"></div>}
+                {(selected || isHovered) ? <DownArrowCircle onClick={() => submitPrompt()} loading={loading} /> : <div className="h-[32px] w-[32px]"></div>}
             </div>
             <div className={`border-t border-gray-300 mt-1 mb-1 group-focus-within:border-gray-800`}></div>
         </>
