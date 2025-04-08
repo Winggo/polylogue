@@ -1,48 +1,61 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    --background: #ffffff;
+    --foreground: #171717;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+    :root {
+        --background: #0a0a0a;
+        --foreground: #ededed;
+    }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Barlow, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: Barlow, sans-serif;
 }
 
+/* @xyflow/react */
 .react-flow__edge {
-  stroke-width: 4px;
-  stroke: #000;
+    stroke-width: 4px;
+    stroke: #000;
 }
 
 .react-flow__node-llmText {
-  border-radius: 30px;
+    border-radius: 30px;
 }
 
 .react-flow__controls {
-  background-color: white;
+    background-color: white;
 }
 
 .react-flow__controls-button {
-  color: black;
-  cursor: pointer;
+    color: black;
+    cursor: pointer;
 }
 
 .react-flow__attribution {
-  display: none;
+    display: none;
+}
+
+/* antd */
+.ant-btn-default {
+    &:hover {
+        color: black !important;
+        border-color: black !important;
+    }
+}
+
+.ant-btn-loading-icon {
+    color: black !important;
 }
