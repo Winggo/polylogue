@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Controls, ControlButton, Panel, useStore } from "@xyflow/react"
 import { Button, Tooltip } from "antd"
 
 const selector = (s: { transform: [number, number, number] }) => s.transform
+const polylogue = ['💬', ' ', 'e', 'u', 'g', 'o', 'l', 'y', 'l', 'o', 'P']
 
 type CanvasInfo = {
     canvasId?: string,
@@ -10,12 +11,24 @@ type CanvasInfo = {
 
 export default function CanvasInfo({ canvasId }: CanvasInfo) { 
     const [x, y, zoom] = useStore(selector)
+    const [curTitle, setCurTitle] = useState("")
     const [copyTooltipTitle, setCopyTooltipTile] = useState("Copy canvas ID")
+
+    useEffect(() => {
+        if (curTitle !== "Polylogue 💬") {
+            const timer = setTimeout(() => {
+                setCurTitle(curTitle + polylogue.pop())
+            }, 20)
+            return () => {
+                clearTimeout(timer)
+            }
+        }
+    }, [curTitle])
 
     return (
         <>
             <Panel position="top-left" className="text-black">
-                <p className="text-2xl font-bold mt-[-6px]">Polylogue</p>
+                <p className="text-2xl font-bold mt-[-6px]">{curTitle}</p>
             </Panel>
             {canvasId && <Panel position="top-right" className="text-black text-right">
                 <p className="font-medium text-lg">Canvas ID: {canvasId}</p>
