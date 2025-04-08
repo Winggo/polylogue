@@ -56,5 +56,5 @@ body {
 /* LLM markdown output */
 .prompt-output p,
 .prompt-output li {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
