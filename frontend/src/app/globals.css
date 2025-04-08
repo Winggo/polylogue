@@ -52,3 +52,9 @@ body {
 .ant-btn-loading-icon {
     color: black !important;
 }
+
+/* LLM markdown output */
+.prompt-output p,
+.prompt-output li {
+    margin-bottom: 8px;
+}

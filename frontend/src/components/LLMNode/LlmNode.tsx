@@ -9,6 +9,7 @@ import {
     useNodesData,
     type Node,
 } from '@xyflow/react'
+import ReactMarkdown from 'react-markdown'
 
 import LLMNodeCard from "./LLMNodeCard"
 import LoadingWheel from "../../icons/LoadingWheel"
@@ -265,7 +266,11 @@ export default function LLMNode ({
         if (loading) {
             return <LoadingWheel />
         } else if (promptResponse) {
-            return <textarea readOnly className="w-full focus:outline-none resize-none" value={promptResponse}></textarea>
+            return (
+                <div className="prompt-output p-1.5 w-full focus:outline-none resize-none">
+                    <ReactMarkdown>{promptResponse}</ReactMarkdown>
+                </div>
+            )
         } else {
             return (
                 <LLMNodeCard />
