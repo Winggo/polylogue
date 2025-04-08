@@ -43,7 +43,7 @@ export default function CanvasInfo({ canvasId }: CanvasInfo) {
                 )}
             </Controls>
             <Panel position="bottom-center" className="text-black text-center !ml-0">
-                Click on background and drag to move across canvas
+                Click and drag background to move across canvas
                 <br />
                 Scroll with mouse or pinch on trackpad to zoom in & out
             </Panel>
