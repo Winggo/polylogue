@@ -32,7 +32,7 @@ const nodeTypes = {
 
 type FlowProps = {
     canvasId?: string,
-    initialNodes?: Node[],
+    existingNodes?: Node[],
     newCanvas?: boolean,
 }
 type ExtendedNode = Node & {
@@ -47,17 +47,17 @@ type ExtendedNode = Node & {
 }
 
 
-export default function Flow({ canvasId, initialNodes, newCanvas }: FlowProps) {
+export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) {
     const reactFlowInstance = useReactFlow()
     const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
     const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
 
     useEffect(() => {
-        if (initialNodes) {
-            setNodes(initialNodes || [])
+        if (existingNodes) {
+            setNodes(existingNodes || [])
         }
-    }, [initialNodes])
+    }, [existingNodes])
 
     useEffect(() => {
         if (newCanvas) return

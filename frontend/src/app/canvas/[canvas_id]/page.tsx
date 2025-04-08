@@ -31,7 +31,7 @@ export default function Index() {
 
     return (
         <ReactFlowProvider>
-            <Flow newCanvas canvasId={canvas_id} initialNodes={canvas?.["nodes"] || []} />
+            <Flow newCanvas canvasId={canvas_id} existingNodes={canvas?.["nodes"] || []} />
         </ReactFlowProvider>
     )
 }
