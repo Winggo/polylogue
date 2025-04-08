@@ -68,9 +68,9 @@ export default function Flow({ canvasId }: FlowProps) {
     const onConnectEnd = useCallback(
         (
             event: MouseEvent | TouchEvent,
-            connectionState: { isValid: boolean | null; fromNode: Node }
+            connectionState: { isValid: boolean | null; fromNode: Node | null }
         ) => {
-            if (!connectionState.isValid || !connectionState.fromNode) {
+            if (!connectionState.isValid) {
                 const id = getId()
                 const { clientX, clientY } =
                     'changedTouches' in event ? event.changedTouches[0] : event
@@ -85,20 +85,23 @@ export default function Flow({ canvasId }: FlowProps) {
                     origin: [0.0, 0.5],
                     selected: true,
                 }
-                const newEdge: Edge = {
-                    id,
-                    source: connectionState.fromNode.id,
-                    target: id,
-                    markerEnd: {
-                        type: MarkerType.ArrowClosed,
-                        width: 20,
-                        height: 20,
-                        color: edgeStrokeColor,
-                    },
-                }
-            
+
                 setNodes((nds) => nds.concat(newNode))
-                setEdges((eds) => [...eds, newEdge])
+
+                if (connectionState.fromNode !== null) {
+                    const newEdge: Edge = {
+                        id,
+                        source: connectionState.fromNode.id,
+                        target: id,
+                        markerEnd: {
+                            type: MarkerType.ArrowClosed,
+                            width: 20,
+                            height: 20,
+                            color: edgeStrokeColor,
+                        },
+                    }
+                    setEdges((eds) => [...eds, newEdge])
+                }
             }
         },
         [reactFlowInstance.screenToFlowPosition],
