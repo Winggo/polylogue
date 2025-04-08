@@ -15,7 +15,7 @@ export default function CanvasInfo({ canvasId }: CanvasInfo) {
     return (
         <>
             <Panel position="top-left" className="text-black">
-                <p className="text-xl font-bold mt-[-4px]">Polylogue</p>
+                <p className="text-2xl font-bold mt-[-6px]">Polylogue</p>
             </Panel>
             {canvasId && <Panel position="top-right" className="text-black text-right">
                 <p className="font-medium text-lg">Canvas ID: {canvasId}</p>
