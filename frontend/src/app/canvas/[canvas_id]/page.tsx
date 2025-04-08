@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import {
     ReactFlowProvider,
 } from '@xyflow/react'
-import Flow, { type ExtendedNode } from "../../../components/Flow/Flow"
+import Flow from "../../../components/Flow/Flow"
 import { localBackendServerURL as backendServerURL } from '@/utils/constants'
 
 
@@ -31,7 +31,7 @@ export default function Index() {
 
     return (
         <ReactFlowProvider>
-            <Flow canvasId={canvas_id} initialNodes={canvas?.["nodes"] || []} />
+            <Flow newCanvas canvasId={canvas_id} initialNodes={canvas?.["nodes"] || []} />
         </ReactFlowProvider>
     )
 }

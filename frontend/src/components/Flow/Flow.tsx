@@ -32,9 +32,10 @@ const nodeTypes = {
 
 type FlowProps = {
     canvasId?: string,
-    initialNodes?: ExtendedNode[],
+    initialNodes?: Node[],
+    newCanvas?: boolean,
 }
-export type ExtendedNode = Node & {
+type ExtendedNode = Node & {
     id: string,
     position: object,
     type: string,
@@ -46,15 +47,20 @@ export type ExtendedNode = Node & {
 }
 
 
-export default function Flow({ canvasId, initialNodes }: FlowProps) {
+export default function Flow({ canvasId, initialNodes, newCanvas }: FlowProps) {
     const reactFlowInstance = useReactFlow()
     const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
-    const [nodes, setNodes, onNodesChange] = useNodesState<ExtendedNode>(initialNodes || [])
+    const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
-    console.log("FETCHED INITAL_NODES:", initialNodes, nodes)
 
     useEffect(() => {
-        if (initialNodes || !reactFlowWrapper?.current) return
+        if (initialNodes) {
+            setNodes(initialNodes || [])
+        }
+    }, [initialNodes])
+
+    useEffect(() => {
+        if (!newCanvas || !reactFlowWrapper?.current) return
         const { width, height } = reactFlowWrapper.current.getBoundingClientRect()
         const position = {
             x: ((width / 2) - (llmNodeSize.width / 2)) * (1 / 0.9), // account for 0.9 zoom
@@ -69,7 +75,7 @@ export default function Flow({ canvasId, initialNodes }: FlowProps) {
         }
 
         reactFlowInstance.addNodes(newNode)
-    }, [reactFlowInstance])
+    }, [reactFlowInstance, newCanvas])
 
     const onConnect = useCallback(
         (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
@@ -96,7 +102,7 @@ export default function Flow({ canvasId, initialNodes }: FlowProps) {
                     origin: [0.0, 0.5],
                 }
 
-                setNodes((nds) => nds.concat(newNode as ExtendedNode))
+                setNodes((nds) => nds.concat(newNode))
 
                 if (connectionState.fromNode !== null) {
                     const newEdge: Edge = {
