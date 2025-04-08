@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useCallback } from 'react'
 import {
     ReactFlow,
@@ -15,7 +17,7 @@ import {
 import '@xyflow/react/dist/base.css'
 
 import LLMNode from "./LlmNode"
-import ViewportInfo from './ViewportInfo'
+import CanvasInfo from "./CanvasInfo"
 
 
 const strokeColor = '#1F2937'
@@ -109,8 +111,7 @@ export default function Flow({ canvasId }: FlowProps) {
                 connectionLineStyle={edgeStyles}
             >
                 <Background gap={25} />
-                <Controls position="top-right" showInteractive={true} />
-                <ViewportInfo canvasId={canvasId} />
+                <CanvasInfo canvasId={canvasId} />
             </ReactFlow>
         </div>
     )
