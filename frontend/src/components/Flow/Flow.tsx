@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useRef, useEffect } from 'react'
+import React, { useCallback, useRef, useEffect, useState } from 'react'
 import {
     ReactFlow,
     Background,
@@ -52,6 +52,7 @@ type ExtendedNode = Node & {
 export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) {
     const reactFlowInstance = useReactFlow()
     const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
+    const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 })
     const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
 
@@ -81,6 +82,38 @@ export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) 
         reactFlowInstance.addNodes(newNode)
     }, [reactFlowInstance, newCanvas])
 
+    // Add the keyboard event listener for Cmd/Ctrl + '
+    useEffect(() => {
+        const handleMouseMove = (event: MouseEvent) => {
+            setCursorPosition({ x: event.clientX, y: event.clientY })
+        }
+        
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if ((event.metaKey || event.ctrlKey) && event.key === '\'') {
+                event.preventDefault()
+                const newNode: Node = {
+                    id: getId(),
+                    position: { x: cursorPosition.x, y: cursorPosition.y },
+                    type: 'llmText',
+                    data: {},
+                    selected: true,
+                }
+                setNodes((nds) => {
+                    return nds.map((n) => {
+                        return { ...n, selected: false }
+                    }).concat({ ...newNode, selected: true }) 
+                })
+            }
+        }
+
+        window.addEventListener('mousemove', handleMouseMove)
+        window.addEventListener('keydown', handleKeyDown)
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove)
+            window.removeEventListener('keydown', handleKeyDown)
+        }
+    }, [setNodes, cursorPosition])
+
     const onConnect = useCallback(
         (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
         [setEdges],
@@ -106,7 +139,6 @@ export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) 
                     origin: [0.0, 0.5],
                     selected: true,
                 }
-
                 setNodes((nds) => nds.concat(newNode))
 
                 if (connectionState.fromNode !== null) {

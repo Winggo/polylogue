@@ -62,6 +62,8 @@ export default function CanvasInfo({ canvasId }: CanvasInfo) {
                     </Tooltip>
             </Controls>
             <Panel position="bottom-center" className="text-black text-center !ml-0">
+                Create new nodes by pressing ⌘'
+                <br />
                 Click and drag background to move across canvas
                 <br />
                 Scroll with mouse or pinch on trackpad to zoom in & out

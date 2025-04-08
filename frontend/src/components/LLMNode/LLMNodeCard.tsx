@@ -13,7 +13,7 @@ export default function LLMNodeCard() {
                 <span>- write a love letter 🌹</span>
             </div>
             <div className="cursor-text select-text text-center">
-                <span>Click on → icon and drag to create node</span>
+                <span>Click on → icon and drag to connect nodes</span>
                 <br />
                 <span>Click on ⋮⋮⋮ and drag to move node</span>
                 <br />
