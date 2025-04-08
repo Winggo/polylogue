@@ -5,7 +5,7 @@ import {
     ReactFlowProvider,
 } from '@xyflow/react'
 import { nanoid } from 'nanoid'
-import Flow from "../../components/Flow"
+import Flow from "../../components/Flow/Flow"
 
 
 export default function Index() {

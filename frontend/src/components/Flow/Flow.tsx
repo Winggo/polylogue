@@ -15,13 +15,13 @@ import {
 } from '@xyflow/react'
 import '@xyflow/react/dist/base.css'
 
-import LLMNode from "./LlmNode"
+import LLMNode from "../LLMNode/LlmNode"
 import CanvasInfo from "./CanvasInfo"
 import {
     llmNodeSize,
     edgeStrokeColor,
     edgeStyles,
-} from "../utils/constants"
+} from "../../utils/constants"
 
 
 let id = 1
@@ -45,8 +45,8 @@ export default function Flow({ canvasId }: FlowProps) {
         if (!reactFlowWrapper || !reactFlowWrapper.current) return
         const { width, height } = reactFlowWrapper.current.getBoundingClientRect()
         const position = {
-            x: (width / 2) - (llmNodeSize.width / 2),
-            y: (height / 2) - (llmNodeSize.height / 2),
+            x: ((width / 2) - (llmNodeSize.width / 2)) * (1 / 0.9), // account for 0.9 zoom
+            y: ((height / 2) - (llmNodeSize.height / 2)) * (1 / 0.9),
         };
 
         const newNode = {
@@ -121,6 +121,7 @@ export default function Flow({ canvasId }: FlowProps) {
                 defaultEdgeOptions={{ style: edgeStyles}}
                 connectionLineStyle={edgeStyles}
                 colorMode="light"
+                defaultViewport={{ x: 0, y: 0, zoom: 0.9 }}
             >
                 <Background gap={25} />
                 <CanvasInfo canvasId={canvasId} />

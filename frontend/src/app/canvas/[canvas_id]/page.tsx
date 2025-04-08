@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation'
 import {
     ReactFlowProvider,
 } from '@xyflow/react'
-import Flow from "../../../components/Flow"
+import Flow from "../../../components/Flow/Flow"
 
 
 export default function Index() {

@@ -10,11 +10,12 @@ import {
     type Node,
 } from '@xyflow/react'
 
-import LoadingWheel from "../icons/LoadingWheel"
+import LLMNodeCard from "./LLMNodeCard"
+import LoadingWheel from "../../icons/LoadingWheel"
 import {
     llmNodeSize,
     localBackendServerURL as backendServerURL,
-} from "../utils/constants"
+} from "../../utils/constants"
 
 
 type LLMNodeProps = {
@@ -184,7 +185,7 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
 
     const renderHeaders = () => (
         <>
-            <svg className="cursor-move absolute top-[-26px] left-[30px] w-[30px] h-[20px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20" fill="none">
+            <svg className="cursor-move absolute top-[-48px] left-[30px] w-[30px] h-[40px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20" fill="none">
                 <circle cx="5" cy="5" r="3.5" fill="#000000" />
                 <circle cx="15" cy="5" r="3.5" fill="#000000" />
                 <circle cx="25" cy="5" r="3.5" fill="#000000" />
@@ -192,6 +193,10 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
                 <circle cx="5" cy="15" r="3.5" fill="#000000" />
                 <circle cx="15" cy="15" r="3.5" fill="#000000" />
                 <circle cx="25" cy="15" r="3.5" fill="#000000" />
+                
+                <circle cx="5" cy="25" r="3.5" fill="#000000" />
+                <circle cx="15" cy="25" r="3.5" fill="#000000" />
+                <circle cx="25" cy="25" r="3.5" fill="#000000" />
             </svg>
             <div className="absolute top-[-26px] right-[30px] w-[150px] h-[20px] text-black pointer-events-none text-right">{modelMapping[model]}</div>
         </>
@@ -248,24 +253,7 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
             return <textarea readOnly className="w-full focus:outline-none resize-none" value={promptResponse}></textarea>
         } else {
             return (
-                <div className="w-full h-full flex flex-col items-center justify-around">
-                    <div className="cursor-text select-text">
-                        You can...
-                        <br />
-                        - create a packing list 🏕️
-                        <br />
-                        - generate a 📚 report
-                        <br />
-                        - come up with 🎁 ideas
-                        <br />
-                        - write a love letter 🌹
-                    </div>
-                    <div className="cursor-text select-text text-center">
-                        Press ⇥ to use suggested prompt
-                        <br />
-                        Press ⌫ to delete this node
-                    </div>
-                </div>
+                <LLMNodeCard />
             )
         }
     }

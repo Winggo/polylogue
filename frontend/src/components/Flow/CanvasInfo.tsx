@@ -42,6 +42,11 @@ export default function CanvasInfo({ canvasId }: CanvasInfo) {
                     </Tooltip>
                 )}
             </Controls>
+            <Panel position="bottom-center" className="text-black text-center !ml-0">
+                Click on background and drag to move across canvas
+                <br />
+                Scroll with mouse or pinch on trackpad to zoom in & out
+            </Panel>
             <Panel position="bottom-right" className="text-black text-right text-md font-medium">
                 x: {x.toFixed(2)}
                 <br />

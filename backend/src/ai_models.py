@@ -30,6 +30,7 @@ context_prompt_template = PromptTemplate(
     input_variables=["context", "prompt"],
     template="""Given the following context and prompt, reply thoughtfully in less than 120 words.
 There may be no context provided. Do not mention the response name or the context name in your response.
+When appropriate, format your response into paragraphs or bullet points for better readability.
 *Context:*
 {context}
 
