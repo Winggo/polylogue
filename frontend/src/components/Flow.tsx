@@ -109,6 +109,7 @@ export default function Flow({ canvasId }: FlowProps) {
                 nodeTypes={nodeTypes}
                 defaultEdgeOptions={{ style: edgeStyles}}
                 connectionLineStyle={edgeStyles}
+                colorMode="light"
             >
                 <Background gap={25} />
                 <CanvasInfo canvasId={canvasId} />
