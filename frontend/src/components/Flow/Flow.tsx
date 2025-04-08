@@ -60,7 +60,8 @@ export default function Flow({ canvasId, initialNodes, newCanvas }: FlowProps) {
     }, [initialNodes])
 
     useEffect(() => {
-        if (!newCanvas || !reactFlowWrapper?.current) return
+        if (newCanvas) return
+        if (!reactFlowWrapper?.current) return
         const { width, height } = reactFlowWrapper.current.getBoundingClientRect()
         const position = {
             x: ((width / 2) - (llmNodeSize.width / 2)) * (1 / 0.9), // account for 0.9 zoom
