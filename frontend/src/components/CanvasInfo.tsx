@@ -14,7 +14,7 @@ export default function CanvasInfo({ canvasId }: CanvasInfo) {
 
     return (
         <>
-            <Panel position="top-right" className="text-right">
+            <Panel position="top-right" className="text-black text-right">
                 <p className="text-xl font-bold">Polylogue</p>
                 <p className="font-medium">Canvas ID: {canvasId}</p>
             </Panel>
@@ -40,7 +40,7 @@ export default function CanvasInfo({ canvasId }: CanvasInfo) {
                     </Tooltip>
                 )}
             </Controls>
-            <Panel position="bottom-right" className="text-right text-20 font-medium">
+            <Panel position="bottom-right" className="text-black text-right text-20 font-medium">
                 Current Viewport: x: {x.toFixed(2)}, y: {y.toFixed(2)}, zoom: {zoom.toFixed(2)}
             </Panel>
         </>
