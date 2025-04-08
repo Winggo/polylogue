@@ -32,17 +32,29 @@ const nodeTypes = {
 
 type FlowProps = {
     canvasId?: string,
+    initialNodes?: ExtendedNode[],
+}
+export type ExtendedNode = Node & {
+    id: string,
+    position: object,
+    type: string,
+    data: object,
+    model: string,
+    prompt?: string,
+    prompt_response?: string,
+    parent_ids: Array<string>,
 }
 
 
-export default function Flow({ canvasId }: FlowProps) {
+export default function Flow({ canvasId, initialNodes }: FlowProps) {
     const reactFlowInstance = useReactFlow()
     const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
-    const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
+    const [nodes, setNodes, onNodesChange] = useNodesState<ExtendedNode>(initialNodes || [])
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
+    console.log("FETCHED INITAL_NODES:", initialNodes, nodes)
 
     useEffect(() => {
-        if (!reactFlowWrapper || !reactFlowWrapper.current) return
+        if (initialNodes || !reactFlowWrapper?.current) return
         const { width, height } = reactFlowWrapper.current.getBoundingClientRect()
         const position = {
             x: ((width / 2) - (llmNodeSize.width / 2)) * (1 / 0.9), // account for 0.9 zoom
@@ -54,7 +66,6 @@ export default function Flow({ canvasId }: FlowProps) {
             position,
             type: 'llmText',
             data: {},
-            selected: true,
         }
 
         reactFlowInstance.addNodes(newNode)
@@ -83,10 +94,9 @@ export default function Flow({ canvasId }: FlowProps) {
                     type: 'llmText',
                     data: {},
                     origin: [0.0, 0.5],
-                    selected: true,
                 }
 
-                setNodes((nds) => nds.concat(newNode))
+                setNodes((nds) => nds.concat(newNode as ExtendedNode))
 
                 if (connectionState.fromNode !== null) {
                     const newEdge: Edge = {
