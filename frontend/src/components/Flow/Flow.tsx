@@ -62,7 +62,7 @@ export default function Flow({ canvasId }: FlowProps) {
 
     const onConnect = useCallback(
         (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
-        [],
+        [setEdges],
     )
 
     const onConnectEnd = useCallback(
@@ -104,7 +104,7 @@ export default function Flow({ canvasId }: FlowProps) {
                 }
             }
         },
-        [reactFlowInstance.screenToFlowPosition],
+        [reactFlowInstance, setEdges, setNodes],
     )
 
     return (
