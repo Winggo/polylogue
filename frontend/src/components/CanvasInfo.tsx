@@ -14,15 +14,17 @@ export default function CanvasInfo({ canvasId }: CanvasInfo) {
 
     return (
         <>
+            <Panel position="top-left" className="text-black">
+                <p className="text-xl font-bold mt-[-4px]">Polylogue</p>
+            </Panel>
             <Panel position="top-right" className="text-black text-right">
-                <p className="text-xl font-bold">Polylogue</p>
-                <p className="font-medium">Canvas ID: {canvasId}</p>
+                <p className="font-medium text-lg">Canvas ID: {canvasId}</p>
             </Panel>
             <Controls
                 position="top-right"
                 showInteractive={true}
                 style={{
-                    "marginTop": "80px",
+                    "marginTop": "50px",
                 }}
             >
                 {canvasId && (
@@ -40,8 +42,12 @@ export default function CanvasInfo({ canvasId }: CanvasInfo) {
                     </Tooltip>
                 )}
             </Controls>
-            <Panel position="bottom-right" className="text-black text-right text-20 font-medium">
-                Current Viewport: x: {x.toFixed(2)}, y: {y.toFixed(2)}, zoom: {zoom.toFixed(2)}
+            <Panel position="bottom-right" className="text-black text-right text-md font-medium">
+                x: {x.toFixed(2)}
+                <br />
+                y: {y.toFixed(2)}
+                <br />
+                zoom: {zoom.toFixed(2)}
             </Panel>
         </>
     )
