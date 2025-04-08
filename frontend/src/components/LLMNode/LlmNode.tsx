@@ -23,7 +23,7 @@ type LLMNodeProps = {
     data: Record<string, any>
 }
 
-const initalModel = "gpt-4o"
+const initialModel = "gpt-4o"
 const models = [
     { value: "gpt-4o", label: "GPT-4o" },
     { value: "claude-sonnet", label: "Claude 3.5 Sonnet" },
@@ -33,17 +33,27 @@ const modelMapping = {
     "claude-sonnet": "Claude 3.5 Sonnet",
 }
 
-export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
+export default function LLMNode ({
+    id: nodeId,
+    selected,
+    data={},
+}: LLMNodeProps) {
+    const {
+        model: existingModel,
+        prompt: exstingPrompt,
+        prompt_response: existingResponse,
+    } = data
+
     const inputRef = useRef<HTMLTextAreaElement>(null)
 
     const [placeholder, setPlaceholder] = useState("")
     const [curPlaceholder, setCurPlaceholder] = useState("")
     const [placeholderIndex, setPlaceholderIndex] = useState(0)
 
-    const [model, setModel] = useState<keyof typeof modelMapping>(initalModel)
-    const [prompt, setPrompt] = useState("")
+    const [model, setModel] = useState<keyof typeof modelMapping>(existingModel || initialModel)
+    const [prompt, setPrompt] = useState(exstingPrompt || "")
     
-    const [promptResponse, setPromptResponse] = useState("")
+    const [promptResponse, setPromptResponse] = useState(existingResponse || "")
 
     const [loading, setLoading] = useState(false)
     const [isHovered, setIsHovered] = useState(false)
@@ -81,8 +91,11 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
         }
     }
 
+    // Fetch prompt suggestion
     useEffect(() => {
-        // Prevent fetching prompt question twice
+        if (prompt) return
+
+        // Prevent fetching twice
         const controller = new AbortController()
         const signal = controller.signal
         fetchPrompt(signal)
@@ -91,7 +104,10 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
         }
     }, [])
 
+    // Add prompt suggestion incremental typing affect
     useEffect(() => {
+        if (prompt) return
+
         if (placeholder && placeholderIndex < placeholder.length) {
             const timer = setTimeout(() => {
                 setCurPlaceholder(curPlaceholder + placeholder[placeholderIndex])
