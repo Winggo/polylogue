@@ -75,6 +75,7 @@ export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) 
             position,
             type: 'llmText',
             data: {},
+            selected: true,
         }
 
         reactFlowInstance.addNodes(newNode)
@@ -103,6 +104,7 @@ export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) 
                     type: 'llmText',
                     data: {},
                     origin: [0.0, 0.5],
+                    selected: true,
                 }
 
                 setNodes((nds) => nds.concat(newNode))
