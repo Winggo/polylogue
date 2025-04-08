@@ -11,8 +11,11 @@ import {
 } from '@xyflow/react'
 
 import LoadingWheel from "../icons/LoadingWheel"
+import {
+    llmNodeSize,
+    localBackendServerURL as backendServerURL,
+} from "../utils/constants"
 
-const backendServerURL = 'http://127.0.0.1:5000'
 
 type LLMNodeProps = {
     id: string
@@ -277,8 +280,8 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
             {renderHandles()}
             {renderHeaders()}
             <div className={`
-                w-[400px]
-                h-[500px]
+                w-[${llmNodeSize.width}px]
+                h-[${llmNodeSize.height}px]
                 bg-white
                 text-black
                 border-gray-800

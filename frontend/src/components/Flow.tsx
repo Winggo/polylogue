@@ -1,10 +1,9 @@
 'use client'
 
-import React, { useCallback } from 'react'
+import React, { useCallback, useRef, useEffect } from 'react'
 import {
     ReactFlow,
     Background,
-    Controls,
     addEdge,
     useEdgesState,
     useNodesState,
@@ -18,13 +17,12 @@ import '@xyflow/react/dist/base.css'
 
 import LLMNode from "./LlmNode"
 import CanvasInfo from "./CanvasInfo"
+import {
+    llmNodeSize,
+    edgeStrokeColor,
+    edgeStyles,
+} from "../utils/constants"
 
-
-const strokeColor = '#1F2937'
-const edgeStyles = {
-    stroke: strokeColor,
-    strokeWidth: 2,
-}
 
 let id = 1
 const getId = () => `${id++}`
@@ -32,25 +30,35 @@ const nodeTypes = {
     llmText: LLMNode,
 }
 
-const initialNodes = [
-    {
-        id: '0',
-        position: { x: 100, y: 100 },
-        type: 'llmText',
-        data: {},
-        selected: true,
-    },
-]
-
 type FlowProps = {
     canvasId?: string,
 }
 
 
 export default function Flow({ canvasId }: FlowProps) {
-    const [nodes, setNodes, onNodesChange] = useNodesState<Node>(initialNodes)
+    const reactFlowInstance = useReactFlow()
+    const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
+    const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
-    const { screenToFlowPosition } = useReactFlow()
+
+    useEffect(() => {
+        if (!reactFlowWrapper || !reactFlowWrapper.current) return
+        const { width, height } = reactFlowWrapper.current.getBoundingClientRect()
+        const position = {
+            x: (width / 2) - (llmNodeSize.width / 2),
+            y: (height / 2) - (llmNodeSize.height / 2),
+        };
+
+        const newNode = {
+            id: '0',
+            position,
+            type: 'llmText',
+            data: {},
+            selected: true,
+        }
+
+        reactFlowInstance.addNodes(newNode)
+    }, [reactFlowInstance])
 
     const onConnect = useCallback(
         (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
@@ -68,7 +76,7 @@ export default function Flow({ canvasId }: FlowProps) {
                     'changedTouches' in event ? event.changedTouches[0] : event
                 const newNode: Node = {
                     id,
-                    position: screenToFlowPosition({
+                    position: reactFlowInstance.screenToFlowPosition({
                         x: clientX,
                         y: clientY,
                     }),
@@ -85,7 +93,7 @@ export default function Flow({ canvasId }: FlowProps) {
                         type: MarkerType.ArrowClosed,
                         width: 20,
                         height: 20,
-                        color: strokeColor,
+                        color: edgeStrokeColor,
                     },
                 }
             
@@ -93,11 +101,11 @@ export default function Flow({ canvasId }: FlowProps) {
                 setEdges((eds) => [...eds, newEdge])
             }
         },
-        [screenToFlowPosition],
+        [reactFlowInstance.screenToFlowPosition],
     )
 
     return (
-        <div className="h-screen w-screen bg-gray-200">
+        <div className="h-screen w-screen bg-gray-200" ref={reactFlowWrapper}>
             <ReactFlow
                 nodes={nodes}
                 edges={edges}

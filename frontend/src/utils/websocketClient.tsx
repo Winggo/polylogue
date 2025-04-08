@@ -3,9 +3,10 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { io, Socket } from 'socket.io-client'
 
+import { localBackendServerURL as backendServerURL  } from './constants'
+
 
 const WebSocketContext = createContext<Socket | null>(null)
-const backendServerURL = 'http://127.0.0.1:5000'
 
 
 export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
