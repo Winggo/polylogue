@@ -3,7 +3,8 @@ import os
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain, SequentialChain
+from langchain_core.runnables import RunnableLambda
+from functools import partial
 
 
 gpt_4o_model = ChatOpenAI(
@@ -57,10 +58,10 @@ def generate_prompt_question(redis, parent_nodes):
     parent_responses = get_parent_responses(redis, parent_nodes=parent_nodes)
     context = "\n\n".join(parent_responses)
 
-    chain = LLMChain(llm=gpt_4o_model, prompt=context_prompt_question_template)
+    chain = context_prompt_question_template | gpt_4o_model
     prompt_question = chain.invoke({ "context": context })
     
-    return prompt_question
+    return prompt_question.content if hasattr(prompt_question, 'content') else str(prompt_question)
 
 
 def generate_response_with_context(
@@ -79,14 +80,14 @@ def generate_response_with_context(
     else:
         raise ValueError(f"Unsupported model type: {model}")
 
-    chain = LLMChain(llm=llm, prompt=context_prompt_template)
+    chain = context_prompt_template | llm
 
     response_with_context = chain.invoke({
         "context": context,
         "prompt": prompt
     })
         
-    return response_with_context
+    return response_with_context.content if hasattr(response_with_context, 'content') else str(response_with_context)
 
 
 def get_ancestor_nodes(redis, node_id) -> list:
@@ -119,9 +120,10 @@ def generate_chained_responses(redis, cur_node):
     ancestor_nodes = get_ancestor_nodes(redis, cur_node["id"])
     ancestor_nodes.append(cur_node)
 
-    chains = []
-    inputs_per_chain = {}
+    initial_inputs = {}
     output_keys = []
+
+    node_operations = []
     for node in ancestor_nodes:
         if node["model"] == "claude-sonnet":
             llm = claude_sonnet_model
@@ -131,6 +133,9 @@ def generate_chained_responses(redis, cur_node):
         prompt_input_key = f"node-input-prompt-{node['id']}"
         output_key = f"node-output-{node['id']}"
         parent_outputs = [f"node-output-{parent_id}" for parent_id in node['parent_ids']]
+
+        initial_inputs[prompt_input_key] = node["prompt"]
+        output_keys.append(output_key)
 
         template = """Given the past dialog and prompt, reply thoughtfully in less than 120 words.
 There may be multiple or no past conversations.
@@ -144,27 +149,43 @@ There may be multiple or no past conversations.
             input_variables=parent_outputs + [prompt_input_key],
             template=template,
         )
-        chains.append(
-            LLMChain(
-                llm=llm,
-                prompt=prompt_template,
-                output_key=output_key
+
+        def process_node(inputs, node_llm, node_prompt_template, node_output_key):
+            # Gather all required inputs
+            prompt_input = inputs[node_prompt_template.input_variables[-1]]  # Last variable is the prompt
+            parent_outputs = {
+                k: inputs[k] 
+                for k in node_prompt_template.input_variables 
+                if k != node_prompt_template.input_variables[-1]
+            }
+            
+            # Format the prompt
+            formatted_prompt = node_prompt_template.format(
+                **parent_outputs,
+                **{node_prompt_template.input_variables[-1]: prompt_input}
+            )
+            
+            # Get LLM response
+            result = node_llm.invoke(formatted_prompt)
+            
+            # Return the output with our key
+            return {node_output_key: result}
+        
+        node_operation = RunnableLambda(
+            partial(
+                process_node,
+                node_llm=llm,
+                node_prompt_template=prompt_template,
+                node_output_key=output_key
             )
         )
-        inputs_per_chain[prompt_input_key] = node["prompt"]
-        output_keys.append(output_key)
+        node_operations.append(node_operation)
+        
 
-    print(f"Chain Prompt Input Values: {inputs_per_chain}")
-    for chain in chains:
-        print(f"Chain Prompt Input Names: {chain.prompt.input_variables}")
-        print(f"Chain Prompt Template: {chain.prompt.template}")
-        print(f"Chain Output Key: {chain.output_key}\n")
-    
-    sequential_chain = SequentialChain(
-        chains=chains,
-        input_variables=list(inputs_per_chain.keys()),
-        output_variables=output_keys,
-    )
-    chained_result = sequential_chain.invoke(inputs_per_chain)
+    print(f"Chain Prompt Input Values: {initial_inputs}")
 
-    return chained_result
+    current_result = initial_inputs
+    for operation in node_operations:
+        current_result.update(operation.invoke(current_result))
+
+    return {k: current_result[k] for k in output_keys}

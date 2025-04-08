@@ -22,7 +22,7 @@ def generate_prompt():
     except Exception as e:
         return jsonify({"error": "Internal Server Error"}), 500
     
-    return jsonify({"prompt": prompt_question["text"]}), 200
+    return jsonify({"prompt": prompt_question}), 200
 
 
 @api_routes.route("/v1/completion", methods=["POST"])
@@ -38,7 +38,7 @@ def generate():
 
     try:
         parent_node_ids = [parent["id"] for parent in data.get("parentNodes", [])]
-        prompt_response = generate_response_with_context(
+        prompt_completion = generate_response_with_context(
             model=model,
             prompt=prompt,
             redis=r,
@@ -49,14 +49,14 @@ def generate():
             "model": model,
             "prompt": prompt,
             "parent_ids": json.dumps(parent_node_ids or []),
-            "prompt_response": prompt_response["text"],
+            "prompt_response": prompt_completion,
         })
     except ValueError as e:
         return jsonify({"error": "Input Error"}), 400
     except Exception as e:
         return jsonify({"error": "Internal Server Error"}), 500
     
-    return jsonify({"response": prompt_response["text"]}), 200
+    return jsonify({"response": prompt_completion}), 200
 
 
 @api_routes.route("/v1/chain-completion", methods=["POST"])
