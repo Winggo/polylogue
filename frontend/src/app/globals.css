@@ -42,3 +42,7 @@ body {
   color: black;
   cursor: pointer;
 }
+
+.react-flow__attribution {
+  display: none;
+}

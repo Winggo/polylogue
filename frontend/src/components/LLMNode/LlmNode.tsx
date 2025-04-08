@@ -268,8 +268,8 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
             {renderHandles()}
             {renderHeaders()}
             <div className={`
-                w-[${llmNodeSize.width}px]
-                h-[${llmNodeSize.height}px]
+                w-[500px]
+                h-[600px]
                 bg-white
                 text-black
                 border-gray-800
