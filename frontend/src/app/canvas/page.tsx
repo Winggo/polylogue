@@ -9,7 +9,7 @@ import Flow from "../../components/Flow/Flow"
 
 
 export default function Index() {
-    const [canvasId, setCanvasId] = useState('...')
+    const [canvasId, setCanvasId] = useState('')
 
     useEffect(() => {
         // Generate ID only on the client side

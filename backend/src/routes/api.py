@@ -11,7 +11,7 @@ from ai_models import (
 api_routes = Blueprint("api_routes", __name__)
 
 
-@api_routes.route("/v1/generate-prompt", methods=["POST"])
+@api_routes.route("/v1/prompt", methods=["POST"])
 def generate_prompt():
     """Generate a prompt, given context"""
     r = current_app.config['REDIS']
@@ -25,7 +25,7 @@ def generate_prompt():
     return jsonify({"prompt": prompt_question["text"]}), 200
 
 
-@api_routes.route("/v1/generate", methods=["POST"])
+@api_routes.route("/v1/completion", methods=["POST"])
 def generate():
     """Generate prompt response, given a prompt"""
     r = current_app.config['REDIS']
@@ -59,7 +59,7 @@ def generate():
     return jsonify({"response": prompt_response["text"]}), 200
 
 
-@api_routes.route("/v1/generate-chain", methods=["POST"])
+@api_routes.route("/v1/chain-completion", methods=["POST"])
 def generate_chain():
     """Given chain prompt responses, given a prompt"""
     r = current_app.config['REDIS']

@@ -13,7 +13,6 @@ import {
 import LLMNodeCard from "./LLMNodeCard"
 import LoadingWheel from "../../icons/LoadingWheel"
 import {
-    llmNodeSize,
     localBackendServerURL as backendServerURL,
 } from "../../utils/constants"
 
@@ -66,7 +65,7 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
 
     const fetchPrompt = async (signal: AbortSignal ) => {
         try {
-            const response = await fetch(`${backendServerURL}/api/v1/generate-prompt`, {
+            const response = await fetch(`${backendServerURL}/api/v1/prompt`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -110,7 +109,7 @@ export default function LLMNode ({ id: nodeId, selected }: LLMNodeProps) {
         setLoading(true)
 
         try {
-            const response = await fetch(`${backendServerURL}/api/v1/generate`, {
+            const response = await fetch(`${backendServerURL}/api/v1/completion`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

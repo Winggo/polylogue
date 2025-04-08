@@ -5,6 +5,7 @@ from flask_cors import CORS
 from flask_socketio import SocketIO
 
 from redis_listener import start_redis_client, start_redis_pubsub
+from db.firestore import start_firestore_project_client
 
 
 load_dotenv()
@@ -16,7 +17,15 @@ r_client = start_redis_client()
 app.config['REDIS'] = r_client
 
 
-from api import api_routes
+ds_client = start_firestore_project_client("polylogue-2025")
+app.config['FIRESTORE'] = ds_client
+
+
+from routes.datastore import ds_routes
+app.register_blueprint(ds_routes, url_prefix="/ds")
+
+
+from routes.api import api_routes
 app.register_blueprint(api_routes, url_prefix="/api")
 
 
@@ -25,7 +34,7 @@ if enable_redis_pubsub:
     pubsub = start_redis_pubsub(r_client, socketio)
     app.config['PUBSUB'] = pubsub
 
-    from sockets import socket_routes
+    from routes.sockets import socket_routes
     app.register_blueprint(socket_routes)
 
 
