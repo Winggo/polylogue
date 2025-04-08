@@ -35,15 +35,17 @@ type FlowProps = {
     existingNodes?: Node[],
     newCanvas?: boolean,
 }
+
 type ExtendedNode = Node & {
     id: string,
     position: object,
     type: string,
-    data: object,
-    model: string,
-    prompt?: string,
-    prompt_response?: string,
-    parent_ids: Array<string>,
+    data: {
+        model: string,
+        prompt?: string,
+        prompt_response?: string,
+        parent_ids: Array<string>,
+    },
 }
 
 
