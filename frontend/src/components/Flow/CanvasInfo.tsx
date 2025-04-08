@@ -47,12 +47,15 @@ export default function CanvasInfo({ canvasId }: CanvasInfo) {
                 <br />
                 Scroll with mouse or pinch on trackpad to zoom in & out
             </Panel>
-            <Panel position="bottom-right" className="text-black text-right text-md font-medium">
+            <Panel position="bottom-left" className="text-black text-left text-md font-medium">
                 x: {x.toFixed(2)}
                 <br />
                 y: {y.toFixed(2)}
                 <br />
                 zoom: {zoom.toFixed(2)}
+            </Panel>
+            <Panel position="bottom-right" className="text-black text-sm">
+                © {new Date().getFullYear()} Winggo Tse
             </Panel>
         </>
     )
