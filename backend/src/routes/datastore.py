@@ -70,7 +70,7 @@ def canvases_operations():
         except Exception as e:
             return jsonify({"error": "Internal Server Error"}), 500
         
-        return jsonify({"id": doc_id}), 200
+        return jsonify({"document_id": doc_id}), 200
 
 
     if request.method == "POST":
@@ -136,7 +136,7 @@ def canvas_operations(canvas_id):
         except Exception as e:
             return jsonify({"error": "Internal Server Error"}), 500
         
-        return jsonify({"id": doc_id}), 200
+        return jsonify({"document_id": doc_id}), 200
     
 
     if request.method == "GET":
