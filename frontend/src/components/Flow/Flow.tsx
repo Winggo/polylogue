@@ -9,9 +9,9 @@ import {
     useNodesState,
     useReactFlow,
     MarkerType,
-    Connection,
-    Node,
-    Edge,
+    type Connection,
+    type Node,
+    type Edge,
 } from '@xyflow/react'
 import { Fade } from "react-awesome-reveal"
 
@@ -125,9 +125,14 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
         const handleKeyDown = (event: KeyboardEvent) => {
             if ((event.metaKey || event.ctrlKey) && event.key === '\'') {
                 event.preventDefault()
+
+                const nodePosition = reactFlowInstance.screenToFlowPosition({
+                    x: cursorPosition.x,
+                    y: cursorPosition.y,
+                })
                 const newNode: Node = {
                     id: getId(),
-                    position: { x: cursorPosition.x, y: cursorPosition.y },
+                    position: { x: nodePosition.x, y: nodePosition.y },
                     type: 'llmText',
                     data: {},
                     selected: true,
@@ -167,12 +172,14 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                 const id = getId()
                 const { clientX, clientY } =
                     'changedTouches' in event ? event.changedTouches[0] : event
+                    
+                const nodePosition = reactFlowInstance.screenToFlowPosition({
+                    x: clientX,
+                    y: clientY,
+                })
                 const newNode: Node = {
                     id,
-                    position: reactFlowInstance.screenToFlowPosition({
-                        x: clientX,
-                        y: clientY,
-                    }),
+                    position: nodePosition,
                     type: 'llmText',
                     data: {},
                     origin: [0.0, 0.5],
@@ -184,6 +191,12 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     const newEdge: Edge = createEdge(connectionState.fromNode.id, id)
                     setEdges((eds) => [...eds, newEdge])
                 }
+
+                reactFlowInstance.setCenter(
+                    nodePosition.x + llmNodeSize.width/2,
+                    nodePosition.y,
+                    { duration: 1000, zoom: 1.0 }
+                )
             }
         },
         [reactFlowInstance, setEdges, setNodes],
