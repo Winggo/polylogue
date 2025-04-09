@@ -169,17 +169,24 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
             event: MouseEvent | TouchEvent,
             connectionState: { isValid: boolean | null; fromNode: Node | null }
         ) => {
-            if (!connectionState.isValid) {
-                const id = getId()
+            if (!connectionState.isValid && connectionState.fromNode !== null) {
                 const { clientX, clientY } =
                     'changedTouches' in event ? event.changedTouches[0] : event
-
                 const nodePosition = reactFlowInstance.screenToFlowPosition({
                     x: clientX,
                     y: clientY,
                 })
+
+                // Prevent new node from being created on top of existing one
+                // Let's move the new node 200px to right
+                const rightDeltaX = nodePosition.x - connectionState.fromNode.position.x
+                const deltaY = Math.abs(nodePosition.y - connectionState.fromNode.position.y)
+                if (((rightDeltaX - llmNodeSize.width) < 50) && deltaY < 100) {
+                    nodePosition.x += 200
+                }
+
                 const newNode: Node = {
-                    id,
+                    id: getId(),
                     position: nodePosition,
                     type: 'llmText',
                     data: {},
@@ -188,10 +195,8 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                 }
                 setNodes((nds) => nds.concat(newNode))
 
-                if (connectionState.fromNode !== null) {
-                    const newEdge: Edge = createEdge(connectionState.fromNode.id, id)
-                    setEdges((eds) => [...eds, newEdge])
-                }
+                const newEdge: Edge = createEdge(connectionState.fromNode.id, newNode.id)
+                setEdges((eds) => [...eds, newEdge])
 
                 reactFlowInstance.setCenter(
                     nodePosition.x + llmNodeSize.width/2,
