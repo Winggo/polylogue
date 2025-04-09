@@ -31,12 +31,12 @@ export default function CanvasInfo({ canvasId }: CanvasInfo) {
                 <p className="text-2xl font-bold mt-[-6px]">{curTitle}</p>
             </Panel>
             {canvasId && <Panel position="top-right" className="text-black text-right">
-                <p className="font-medium text-lg">Canvas ID: {canvasId}</p>
+                <p className="text-lg">Canvas ID: {canvasId}</p>
                 <Button
                     className=" mt-[5px] mb-[5px] !pl-[20px] !pr-[20px] !pt-[20px] !pb-[20px] !shadow-xl"
                     // loading
                 >
-                    <div className="font-medium">Save Canvas</div>
+                    <div className="font-semibold">Save Canvas</div>
                 </Button>
             </Panel>}
             <Controls
@@ -61,7 +61,7 @@ export default function CanvasInfo({ canvasId }: CanvasInfo) {
                         </ControlButton>
                     </Tooltip>
             </Controls>
-            <Panel position="bottom-left" className="!z-3 text-black text-left text-md font-medium">
+            <Panel position="bottom-left" className="!z-3 text-black text-left text-md font">
                 x: {x.toFixed(2)}
                 <br />
                 y: {y.toFixed(2)}
