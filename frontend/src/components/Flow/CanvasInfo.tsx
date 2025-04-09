@@ -98,7 +98,7 @@ export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, sa
                 zoom: {zoom.toFixed(2)}
             </Panel>
             <Panel position="bottom-center" className="!z-3 text-black text-center !ml-0">
-                Create new nodes by pressing ⌘'
+                Press ⌘+' to create new nodes
                 <br />
                 Click and drag background to move across canvas
                 <br />
