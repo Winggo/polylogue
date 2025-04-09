@@ -256,7 +256,7 @@ export default function LLMNode ({
             return <LoadingWheel />
         } else if (promptResponse) {
             return (
-                <div className="prompt-output p-1.5 w-full focus:outline-none resize-none">
+                <div className="prompt-output p-1.5 w-full focus:outline-none resize-none select-text">
                     <ReactMarkdown>{promptResponse}</ReactMarkdown>
                 </div>
             )
