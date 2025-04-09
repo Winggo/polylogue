@@ -1,11 +1,11 @@
-import datetime
+from datetime import datetime
 from flask import Blueprint, jsonify, request, current_app
 from db.firestore import (
     get_document_by_collection_and_id,
     save_document_in_collection,
     update_document_in_collection,
 )
-from routes.validation.validate import validate_json
+from routes.validation.validate import validate_json, OptionalField
 
 
 ds_routes = Blueprint("ds_routes", __name__)
@@ -21,9 +21,23 @@ def canvases_operations():
     @validate_json({
         'canvasId': str,
         'title': str,
-        'description': str,
-        'nodes': list[dict],
-        'createdBy': str,
+        'description': OptionalField(str),
+        'nodes': [{
+            'id': str,
+            'type': str,
+            'position': {
+                'x': float,
+                'y': float,
+            },
+            'data': {
+                'model': OptionalField(str),
+                'prompt': OptionalField(str),
+                'prompt_response': OptionalField(str),
+                'parent_ids': [str],
+            },
+            'selected': OptionalField(bool),
+        }],
+        'createdBy': OptionalField(str),
     })
     def save_canvas():
         """
@@ -45,9 +59,9 @@ def canvases_operations():
                 {
                     "canvas_id": data["canvasId"],
                     "title": data["title"],
-                    "description": data["description"],
+                    "description": data.get("description"),
                     "nodes": data["nodes"],
-                    "created_by": data["createdBy"],
+                    "created_by": data.get("createdBy"),
                     "created_at": datetime.now(),
                     "updated_at": datetime.now(),
                 },
@@ -85,9 +99,23 @@ def canvas_operations(canvas_id):
     
     
     @validate_json({
-        'title': str,
-        'description': str,
-        'nodes': list[dict],
+        'title': OptionalField(str),
+        'description': OptionalField(str),
+        'nodes': OptionalField([{
+            'id': str,
+            'type': str,
+            'position': {
+                'x': float,
+                'y': float,
+            },
+            'data': {
+                'model': OptionalField(str),
+                'prompt': OptionalField(str),
+                'prompt_response': OptionalField(str),
+                'parent_ids': [str],
+            },
+            'selected': OptionalField(bool),
+        }]),
     })
     def update_canvas(id):
         """
