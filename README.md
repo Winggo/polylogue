@@ -1,4 +1,4 @@
-# Polylogue
+# Polylogue 💬
 _discussion or speech involving multiple participants, through multiple forms of communication_
 
 A figma-like canvas editor to visualize and engage in branching conversations across various LLMs.
