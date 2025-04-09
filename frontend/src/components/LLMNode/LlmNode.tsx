@@ -9,6 +9,7 @@ import {
     useNodesData,
     type Node,
 } from '@xyflow/react'
+import { Skeleton } from "antd"
 import ReactMarkdown from 'react-markdown'
 
 import LLMNodeCard from "./LLMNodeCard"
@@ -252,7 +253,7 @@ export default function LLMNode ({
 
     const renderOutput = () => {
         if (loading) {
-            return <LoadingWheel />
+            return <Skeleton active paragraph={{rows: 10}} className="mt-[10px]" />
         } else if (promptResponse) {
             return (
                 <div className="prompt-output p-1.5 w-full focus:outline-none resize-none select-text cursor-text">
@@ -260,9 +261,7 @@ export default function LLMNode ({
                 </div>
             )
         } else {
-            return (
-                <LLMNodeCard />
-            )
+            return <LLMNodeCard />
         }
     }
 
