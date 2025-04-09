@@ -32,6 +32,7 @@ context_prompt_template = PromptTemplate(
     template="""Given the following context and prompt, reply thoughtfully in less than 120 words.
 There may be no context provided. Do not mention the response name or the context name in your response.
 For better readability, divide your response into paragraphs, use bullet points or numbered lists, and use markdown where appropriate.
+Add newlines between each bullet point. Try ending the response with a question to encourage discussion.
 *Context:*
 {context}
 
