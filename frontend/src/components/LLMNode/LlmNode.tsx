@@ -145,7 +145,6 @@ export default function LLMNode ({
             const data = await response.json()
             setPromptResponse(data.response)
         } catch(error) {
-            console.error("Error:", error)
             setPromptResponse("An error occurred. Please try again.")
         } finally {
             clearTimeout(timeoutId)
