@@ -30,12 +30,6 @@ const nodeTypes = {
     llmText: LLMNode,
 }
 
-type FlowProps = {
-    canvasId?: string,
-    existingNodes?: Node[],
-    newCanvas?: boolean,
-}
-
 type ExtendedNode = {
     id: string,
     type: string,
@@ -50,6 +44,12 @@ type ExtendedNode = {
         parent_ids?: Array<string>,
     },
     selected?: boolean,
+}
+
+type FlowProps = {
+    canvasId: string,
+    existingNodes?: ExtendedNode[],
+    newCanvas?: boolean,
 }
 
 
@@ -75,14 +75,27 @@ export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) 
     const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
 
+    // Existing nodes present, create edges for them
     useEffect(() => {
         if (existingNodes) {
-            setNodes(existingNodes || [])
+            const edgesForExistingNodes: Edge[] = []
+            for (const exNode of existingNodes) {
+                if (exNode.data.parent_ids && exNode.data.parent_ids.length > 0) {
+                    for (const parentId of exNode.data.parent_ids) {
+                        edgesForExistingNodes.push(
+                            createEdge(parentId, exNode.id)
+                        )
+                    }   
+                }
+            }
+            setNodes((nds) => nds.concat(existingNodes || []))
+            setEdges((eds) => eds.concat(edgesForExistingNodes))
         }
     }, [existingNodes])
 
+    // Upon new canvas, create single node in center of canvas
     useEffect(() => {
-        if (newCanvas) return
+        if (!newCanvas) return
         if (!reactFlowWrapper?.current) return
         const { width, height } = reactFlowWrapper.current.getBoundingClientRect()
         const position = {
@@ -101,7 +114,7 @@ export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) 
         reactFlowInstance.addNodes(newNode)
     }, [reactFlowInstance, newCanvas])
 
-    // Add the keyboard event listener for Cmd/Ctrl + '
+    // Create new node on Cmd/Ctrl + '
     useEffect(() => {
         const handleMouseMove = (event: MouseEvent) => {
             setCursorPosition({ x: event.clientX, y: event.clientY })

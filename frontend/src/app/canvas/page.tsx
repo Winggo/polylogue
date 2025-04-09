@@ -36,7 +36,7 @@ function NewCanvas() {
     return (
         <ReactFlowProvider>
             {contextHolder}
-            <Flow canvasId={canvasId} />
+            <Flow newCanvas canvasId={canvasId} />
         </ReactFlowProvider>
     )
 }
