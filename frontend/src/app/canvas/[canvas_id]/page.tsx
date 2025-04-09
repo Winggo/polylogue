@@ -23,14 +23,22 @@ export default function Index() {
 
     const [canvas, setCanvas] = useState<Canvas | null>(null)
 
+    const redirectToNewCanvasPage = () => {
+        setCanvas(null)
+        router.push(`/canvas?error=canvas-not-found-${canvas_id}`)
+    }
+
     const fetchCanvas = async () => {
         try {
             const response = await fetch(`${backendServerURL}/ds/v1/canvases/${canvas_id}`)
+            if (response.status !== 200) {
+                redirectToNewCanvasPage()
+            }
+
             const canvas = await response.json()
             setCanvas(canvas["document"])
         } catch(err) {
-            setCanvas(null)
-            router.push(`/canvas?error=canvas-not-found-${canvas_id}`)
+            redirectToNewCanvasPage()
         }
     }
 
