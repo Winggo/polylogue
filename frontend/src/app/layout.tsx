@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
+import { AntdRegistry } from '@ant-design/nextjs-registry'
 import "./globals.css"
 
 import { WebSocketProvider } from '../utils/websocketClient'
@@ -37,7 +38,9 @@ export default function RootLayout({
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
                 <WebSocketProvider>
-                    {children}
+                    <AntdRegistry>
+                        {children}
+                    </AntdRegistry>
                 </WebSocketProvider>
             </body>
         </html>
