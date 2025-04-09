@@ -30,7 +30,7 @@ const nodeTypes = {
     llmText: LLMNode,
 }
 
-type ExtendedNode = {
+export type ExtendedNode = {
     id: string,
     type: string,
     position: {
@@ -48,6 +48,7 @@ type ExtendedNode = {
 
 type FlowProps = {
     canvasId: string,
+    canvasTitle?: string,
     existingNodes?: ExtendedNode[],
     newCanvas?: boolean,
 }
@@ -68,7 +69,7 @@ function createEdge(sourceId: string, targetId: string) {
 }
 
 
-export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) {
+export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }: FlowProps) {
     const reactFlowInstance = useReactFlow()
     const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
     const [flowRendered, setFlowRendered] = useState(false)
@@ -207,7 +208,7 @@ export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) 
                     defaultViewport={{ x: 0, y: 0, zoom: 0.9 }}
                 >
                     <Background gap={25} />
-                    {flowRendered && <CanvasInfo canvasId={canvasId} />}
+                    {flowRendered && <CanvasInfo canvasId={canvasId} canvasTitle={canvasTitle} />}
                 </ReactFlow>
             </div>
         </Fade>

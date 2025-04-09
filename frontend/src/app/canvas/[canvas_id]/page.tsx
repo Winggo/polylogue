@@ -5,14 +5,23 @@ import { useParams, useRouter } from 'next/navigation'
 import {
     ReactFlowProvider,
 } from '@xyflow/react'
-import Flow from "../../../components/Flow/Flow"
+import Flow, { type ExtendedNode } from "../../../components/Flow/Flow"
 import { localBackendServerURL as backendServerURL } from '@/utils/constants'
+
+
+interface Canvas {
+    canvas_id: string;
+    title: string;
+    description?: string;
+    nodes: ExtendedNode[];
+}
 
 
 export default function Index() {
     const { canvas_id }: { canvas_id: string } = useParams()
     const router = useRouter()
-    const [canvas, setCanvas] = useState(null)
+
+    const [canvas, setCanvas] = useState<Canvas | null>(null)
 
     const fetchCanvas = async () => {
         try {
@@ -31,7 +40,7 @@ export default function Index() {
 
     return (
         <ReactFlowProvider>
-            <Flow canvasId={canvas_id} existingNodes={canvas?.["nodes"] || []} />
+            <Flow canvasId={canvas_id} canvasTitle={canvas?.title} existingNodes={canvas?.["nodes"] || []} />
         </ReactFlowProvider>
     )
 }

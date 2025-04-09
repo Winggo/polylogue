@@ -7,9 +7,10 @@ const polylogue = ['P', 'o', 'l', 'y', 'l', 'o', 'g', 'u', 'e', ' ', '💬']
 
 type CanvasInfo = {
     canvasId?: string,
+    canvasTitle?: string,
 }
 
-export default function CanvasInfo({ canvasId }: CanvasInfo) { 
+export default function CanvasInfo({ canvasId, canvasTitle }: CanvasInfo) { 
     const [x, y, zoom] = useStore(selector)
     const [curTitle, setCurTitle] = useState("")
     const [copyTooltipTitle, setCopyTooltipTile] = useState("Copy canvas ID")
@@ -28,7 +29,7 @@ export default function CanvasInfo({ canvasId }: CanvasInfo) {
     return (
         <>
             <Panel position="top-left" className="text-black">
-                <p className="text-2xl font-bold mt-[-6px]">{curTitle}</p>
+                <p className="text-2xl font-bold mt-[-6px] cursor-default">{curTitle}</p>
             </Panel>
             {canvasId && <Panel position="top-right" className="text-black text-right">
                 <p className="text-lg">Canvas ID: {canvasId}</p>
@@ -39,6 +40,9 @@ export default function CanvasInfo({ canvasId }: CanvasInfo) {
                     <div className="font-semibold">Save Canvas</div>
                 </Button>
             </Panel>}
+            <Panel position="top-center" className="text-lg font-medium">
+                {canvasTitle || "New Canvas"}
+            </Panel>
             <Controls
                 position="top-right"
                 showInteractive={true}
@@ -68,7 +72,7 @@ export default function CanvasInfo({ canvasId }: CanvasInfo) {
                 <br />
                 zoom: {zoom.toFixed(2)}
             </Panel>
-            <Panel position="bottom-center" className="!z-3 text-black text-center !ml-0">
+            <Panel position="bottom-center" className="!z-3 text-black text-center">
                 Create new nodes by pressing ⌘'
                 <br />
                 Click and drag background to move across canvas
