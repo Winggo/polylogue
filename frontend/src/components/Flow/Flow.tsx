@@ -53,6 +53,21 @@ type ExtendedNode = {
 }
 
 
+function createEdge(sourceId: string, targetId: string) {
+    return {
+        id: `edge-${sourceId}-${targetId}`,
+        source: sourceId,
+        target: targetId,
+        markerEnd: {
+            type: MarkerType.ArrowClosed,
+            width: 20,
+            height: 20,
+            color: edgeStrokeColor,
+        },
+    }
+}
+
+
 export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) {
     const reactFlowInstance = useReactFlow()
     const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
@@ -121,18 +136,8 @@ export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) 
     const onConnect = useCallback(
         (connection: Connection) => setEdges(
             (eds) => {
-                return addEdge(
-                    {
-                        ...connection,
-                        markerEnd: {
-                            type: MarkerType.ArrowClosed,
-                            width: 20,
-                            height: 20,
-                            color: edgeStrokeColor,
-                        },
-                    },
-                    eds
-                )
+                const newEdge: Edge = createEdge(connection.source, connection.target)
+                return addEdge(newEdge, eds)
             }
         ),
         [setEdges],
@@ -161,17 +166,7 @@ export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) 
                 setNodes((nds) => nds.concat(newNode))
 
                 if (connectionState.fromNode !== null) {
-                    const newEdge: Edge = {
-                        id,
-                        source: connectionState.fromNode.id,
-                        target: id,
-                        markerEnd: {
-                            type: MarkerType.ArrowClosed,
-                            width: 20,
-                            height: 20,
-                            color: edgeStrokeColor,
-                        },
-                    }
+                    const newEdge: Edge = createEdge(connectionState.fromNode.id, id)
                     setEdges((eds) => [...eds, newEdge])
                 }
             }
