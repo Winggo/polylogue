@@ -119,7 +119,22 @@ export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) 
     }, [setNodes, cursorPosition])
 
     const onConnect = useCallback(
-        (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
+        (connection: Connection) => setEdges(
+            (eds) => {
+                return addEdge(
+                    {
+                        ...connection,
+                        markerEnd: {
+                            type: MarkerType.ArrowClosed,
+                            width: 20,
+                            height: 20,
+                            color: edgeStrokeColor,
+                        },
+                    },
+                    eds
+                )
+            }
+        ),
         [setEdges],
     )
 
