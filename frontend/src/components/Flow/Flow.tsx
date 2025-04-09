@@ -13,7 +13,7 @@ import {
     Node,
     Edge,
 } from '@xyflow/react'
-import { Spin } from "antd"
+import { Fade } from "react-awesome-reveal"
 
 import LLMNode from "../LLMNode/LlmNode"
 import CanvasInfo from "./CanvasInfo"
@@ -189,26 +189,27 @@ export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) 
     )
 
     return (
-        <div className="h-screen w-screen bg-gray-200" ref={reactFlowWrapper}>
-            <ReactFlow
-                onInit={() => setFlowRendered(true)}
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
-                onConnectEnd={onConnectEnd}
-                preventScrolling={false}
-                nodeTypes={nodeTypes}
-                defaultEdgeOptions={{ style: edgeStyles}}
-                connectionLineStyle={edgeStyles}
-                colorMode="light"
-                defaultViewport={{ x: 0, y: 0, zoom: 0.9 }}
-            >
-                <Background gap={25} />
-                {flowRendered && <CanvasInfo canvasId={canvasId} />}
-                {!flowRendered && <Spin spinning fullscreen />}
-            </ReactFlow>
-        </div>
+        <Fade delay={0} duration={1000} cascade damping={0.5} triggerOnce>
+            <div className="h-screen w-screen bg-gray-200" ref={reactFlowWrapper}>
+                <ReactFlow
+                    onInit={() => setFlowRendered(true)}
+                    nodes={nodes}
+                    edges={edges}
+                    onNodesChange={onNodesChange}
+                    onEdgesChange={onEdgesChange}
+                    onConnect={onConnect}
+                    onConnectEnd={onConnectEnd}
+                    preventScrolling={false}
+                    nodeTypes={nodeTypes}
+                    defaultEdgeOptions={{ style: edgeStyles}}
+                    connectionLineStyle={edgeStyles}
+                    colorMode="light"
+                    defaultViewport={{ x: 0, y: 0, zoom: 0.9 }}
+                >
+                    <Background gap={25} />
+                    {flowRendered && <CanvasInfo canvasId={canvasId} />}
+                </ReactFlow>
+            </div>
+        </Fade>
     )
 }
