@@ -41,7 +41,7 @@ export type ExtendedNode = {
         model?: string,
         prompt?: string,
         prompt_response?: string,
-        parent_ids?: Array<string>,
+        parent_ids: Array<string>,
     },
     selected?: boolean,
 }
@@ -172,7 +172,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                 const id = getId()
                 const { clientX, clientY } =
                     'changedTouches' in event ? event.changedTouches[0] : event
-                    
+
                 const nodePosition = reactFlowInstance.screenToFlowPosition({
                     x: clientX,
                     y: clientY,
