@@ -61,21 +61,21 @@ export default function CanvasInfo({ canvasId }: CanvasInfo) {
                         </ControlButton>
                     </Tooltip>
             </Controls>
-            <Panel position="bottom-center" className="text-black text-center !ml-0">
-                Create new nodes by pressing ⌘'
-                <br />
-                Click and drag background to move across canvas
-                <br />
-                Scroll with mouse or pinch on trackpad to zoom in & out
-            </Panel>
-            <Panel position="bottom-left" className="text-black text-left text-md font-medium">
+            <Panel position="bottom-left" className="!z-3 text-black text-left text-md font-medium">
                 x: {x.toFixed(2)}
                 <br />
                 y: {y.toFixed(2)}
                 <br />
                 zoom: {zoom.toFixed(2)}
             </Panel>
-            <Panel position="bottom-right" className="text-black text-sm">
+            <Panel position="bottom-center" className="!z-3 text-black text-center !ml-0">
+                Create new nodes by pressing ⌘'
+                <br />
+                Click and drag background to move across canvas
+                <br />
+                Scroll with mouse or pinch on trackpad to zoom in & out
+            </Panel>
+            <Panel position="bottom-right" className="!z-3 text-black text-sm">
                 © {new Date().getFullYear()} Winggo Tse
             </Panel>
         </>
