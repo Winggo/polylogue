@@ -40,7 +40,7 @@ export default function CanvasInfo({ canvasId, canvasTitle }: CanvasInfo) {
                     <div className="font-semibold">Save Canvas</div>
                 </Button>
             </Panel>}
-            <Panel position="top-center" className="text-lg font-medium">
+            <Panel position="top-center" className="text-lg font-medium !ml-0">
                 {canvasTitle || "New Canvas"}
             </Panel>
             <Controls
@@ -72,7 +72,7 @@ export default function CanvasInfo({ canvasId, canvasTitle }: CanvasInfo) {
                 <br />
                 zoom: {zoom.toFixed(2)}
             </Panel>
-            <Panel position="bottom-center" className="!z-3 text-black text-center">
+            <Panel position="bottom-center" className="!z-3 text-black text-center !ml-0">
                 Create new nodes by pressing ⌘'
                 <br />
                 Click and drag background to move across canvas
