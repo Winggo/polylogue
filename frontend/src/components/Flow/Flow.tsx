@@ -13,7 +13,7 @@ import {
     Node,
     Edge,
 } from '@xyflow/react'
-import '@xyflow/react/dist/base.css'
+import { Spin } from "antd"
 
 import LLMNode from "../LLMNode/LlmNode"
 import CanvasInfo from "./CanvasInfo"
@@ -71,6 +71,7 @@ function createEdge(sourceId: string, targetId: string) {
 export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) {
     const reactFlowInstance = useReactFlow()
     const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
+    const [flowRendered, setFlowRendered] = useState(false)
     const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 })
     const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
@@ -190,6 +191,7 @@ export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) 
     return (
         <div className="h-screen w-screen bg-gray-200" ref={reactFlowWrapper}>
             <ReactFlow
+                onInit={() => setFlowRendered(true)}
                 nodes={nodes}
                 edges={edges}
                 onNodesChange={onNodesChange}
@@ -204,7 +206,8 @@ export default function Flow({ canvasId, existingNodes, newCanvas }: FlowProps) 
                 defaultViewport={{ x: 0, y: 0, zoom: 0.9 }}
             >
                 <Background gap={25} />
-                <CanvasInfo canvasId={canvasId} />
+                {flowRendered && <CanvasInfo canvasId={canvasId} />}
+                {!flowRendered && <Spin spinning fullscreen />}
             </ReactFlow>
         </div>
     )

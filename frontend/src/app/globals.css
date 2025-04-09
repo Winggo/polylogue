@@ -53,6 +53,13 @@ body {
     color: black !important;
 }
 
+.ant-spin-fullscreen {
+    background-color: transparent !important;
+}
+.ant-spin-dot-item {
+    color: black;
+}
+
 /* LLM node */
 .prompt-output p,
 .prompt-output li {
