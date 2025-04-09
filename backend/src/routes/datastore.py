@@ -39,15 +39,20 @@ def canvases_operations():
         """
         data = request.json
         try:
-            doc_id = save_document_in_collection(db, "canvases", {
-                "canvas_id": data["canvasId"],
-                "title": data["title"],
-                "description": data["description"],
-                "nodes": data["nodes"],
-                "created_by": data["createdBy"],
-                "created_at": datetime.now(),
-                "updated_at": datetime.now(),
-            })
+            doc_id = save_document_in_collection(
+                db,
+                "canvases",
+                {
+                    "canvas_id": data["canvasId"],
+                    "title": data["title"],
+                    "description": data["description"],
+                    "nodes": data["nodes"],
+                    "created_by": data["createdBy"],
+                    "created_at": datetime.now(),
+                    "updated_at": datetime.now(),
+                },
+                doc_id=data["canvasId"]
+            )
         except Exception as e:
             return jsonify({"error": "Internal Server Error"}), 500
         
