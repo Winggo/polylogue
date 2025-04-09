@@ -16,7 +16,7 @@ Each prompt & completion is represented as a node, and different models can be s
 - Allow resizing nodes
 - Explore templating conversations for different usecases
 
-### Stack
+## Stack
 - Next.js & tailwind
 - Flask
 - Redis
