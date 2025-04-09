@@ -36,16 +36,20 @@ type FlowProps = {
     newCanvas?: boolean,
 }
 
-type ExtendedNode = Node & {
+type ExtendedNode = {
     id: string,
-    position: object,
     type: string,
+    position: {
+        x: number,
+        y: number,
+    },
     data: {
-        model: string,
+        model?: string,
         prompt?: string,
         prompt_response?: string,
-        parent_ids: Array<string>,
+        parent_ids?: Array<string>,
     },
+    selected?: boolean,
 }
 
 
