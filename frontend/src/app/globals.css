@@ -51,6 +51,7 @@ body {
 
 .ant-btn-loading-icon {
     color: black !important;
+    margin-bottom: 5px;
 }
 
 .ant-spin-fullscreen {

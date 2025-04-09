@@ -2,15 +2,20 @@ import { useState, useEffect } from "react"
 import { Controls, ControlButton, Panel, useStore } from "@xyflow/react"
 import { Button, Tooltip } from "antd"
 
+import CopyIcon from "../../icons/CopyIcon"
+
+
 const selector = (s: { transform: [number, number, number] }) => s.transform
 const polylogue = ['P', 'o', 'l', 'y', 'l', 'o', 'g', 'u', 'e', ' ', '💬']
 
 type CanvasInfo = {
     canvasId?: string,
     canvasTitle?: string,
+    handleSaveCanvas: Function,
+    savingCanvas: boolean,
 }
 
-export default function CanvasInfo({ canvasId, canvasTitle }: CanvasInfo) { 
+export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, savingCanvas }: CanvasInfo) { 
     const [x, y, zoom] = useStore(selector)
     const [curTitle, setCurTitle] = useState("")
     const [copyTooltipTitle, setCopyTooltipTile] = useState("Copy canvas ID")
@@ -26,45 +31,65 @@ export default function CanvasInfo({ canvasId, canvasTitle }: CanvasInfo) {
         }
     }, [curTitle])
 
-    return (
-        <>
-            <Panel position="top-left" className="text-black">
-                <p className="text-2xl font-bold mt-[-6px] cursor-default">{curTitle}</p>
-            </Panel>
-            {canvasId && <Panel position="top-right" className="text-black text-right">
-                <p className="text-lg">Canvas ID: {canvasId}</p>
-                <Button
-                    className=" mt-[5px] mb-[5px] !pl-[20px] !pr-[20px] !pt-[20px] !pb-[20px] !shadow-xl"
-                    // loading
+    const renderTopRightPanel = () => {
+        if (!canvasId) return
+        return (
+            <><Panel position="top-right" className="text-black text-right">
+                <Tooltip
+                    title={<div>
+                        <b>Save & Retrieve link</b>
+                        <br />
+                        <span>Revisit with link or share with others</span>
+                    </div>}
+                    placement="left"
+                    mouseLeaveDelay={0}
                 >
-                    <div className="font-semibold">Save Canvas</div>
-                </Button>
-            </Panel>}
-            <Panel position="top-center" className="text-lg font-medium !ml-0">
-                {canvasTitle || "New Canvas"}
-            </Panel>
-            <Controls
-                position="top-right"
-                showInteractive={true}
-                className="shadow-xl"
-                style={{
-                    "marginTop": "100px",
-                }}
-            >
+                    <Button
+                        className=" mt-[5px] mb-[5px] !pl-[20px] !pr-[20px] !pt-[20px] !pb-[20px] !shadow-xl"
+                        loading={savingCanvas}
+                        onClick={() => handleSaveCanvas()}
+                    >
+                        <div className="font-semibold">Save Canvas</div>
+                    </Button>
+                </Tooltip>
+                </Panel>
+                <Controls
+                    position="top-right"
+                    showInteractive={true}
+                    className="shadow-xl"
+                    style={{
+                        "marginTop": "75px",
+                    }}
+                >
                     <Tooltip
                         title={copyTooltipTitle}
                         placement="left"
                         mouseLeaveDelay={0}
                     >
-                        <ControlButton onMouseLeave={() => setCopyTooltipTile("Copy canvas ID")} onClick={() => {
-                            if (!canvasId) return
-                            navigator.clipboard.writeText(canvasId)
-                            setCopyTooltipTile("Copied!")
-                        }}>
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M17.5 14H19C20.1046 14 21 13.1046 21 12V5C21 3.89543 20.1046 3 19 3H12C10.8954 3 10 3.89543 10 5V6.5M5 10H12C13.1046 10 14 10.8954 14 12V19C14 20.1046 13.1046 21 12 21H5C3.89543 21 3 20.1046 3 19V12C3 10.8954 3.89543 10 5 10Z" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
+                        <ControlButton
+                            onMouseLeave={() => setCopyTooltipTile("Copy canvas ID")}
+                            onClick={() => {
+                                if (!canvasId) return
+                                navigator.clipboard.writeText(canvasId)
+                                setCopyTooltipTile("Copied!")
+                            }}
+                        >
+                            <CopyIcon />
                         </ControlButton>
                     </Tooltip>
-            </Controls>
+            </Controls></>
+        )
+    }
+
+    return (
+        <>
+            <Panel position="top-left" className="text-black">
+                <p className="text-2xl font-bold mt-[-6px] cursor-default">{curTitle}</p>
+            </Panel>
+            {renderTopRightPanel()}
+            <Panel position="top-center" className="text-lg font-medium !ml-0">
+                {canvasTitle || "New Canvas"}
+            </Panel>
             <Panel position="bottom-left" className="!z-3 text-black text-left text-md font">
                 x: {x.toFixed(2)}
                 <br />
