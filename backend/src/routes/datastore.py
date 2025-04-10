@@ -36,6 +36,11 @@ def canvases_operations():
                 'parent_ids': [str],
             },
             'selected': OptionalField(bool),
+            'measured': OptionalField({
+                'width': float,
+                'height': float,
+            }),
+            'origin': OptionalField([float, float]),
         }],
         'createdBy': OptionalField(str),
     })
@@ -115,6 +120,11 @@ def canvas_operations(canvas_id):
                 'parent_ids': [str],
             },
             'selected': OptionalField(bool),
+            'measured': OptionalField({
+                'width': float,
+                'height': float,
+            }),
+            'origin': OptionalField([float, float]),
         }]),
     })
     def update_canvas(id):
