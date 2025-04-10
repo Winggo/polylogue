@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { Controls, ControlButton, Panel, useStore } from "@xyflow/react"
 import { Button, Tooltip } from "antd"
+import '@ant-design/v5-patch-for-react-19'
 
 import CopyIcon from "../../icons/CopyIcon"
 
