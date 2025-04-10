@@ -14,6 +14,7 @@ import {
     type Edge,
 } from '@xyflow/react'
 import { Fade } from "react-awesome-reveal"
+import { nanoid } from 'nanoid'
 
 import LLMNode from "../LLMNode/LlmNode"
 import CanvasInfo from "./CanvasInfo"
@@ -28,6 +29,26 @@ let id = 1
 const getId = () => `${id++}`
 const nodeTypes = {
     llmText: LLMNode,
+}
+
+type createNewLlmTextNodeParams = {
+    position: { x: number, y: number },
+    selected?: boolean,
+    origin?: [number, number] | null,
+}
+
+function createNewLlmTextNode(
+    {position, selected=true, origin=null}
+    : createNewLlmTextNodeParams): Node {
+    const newNode = {
+        id: nanoid(10),
+        position,
+        type: 'llmText',
+        data: {},
+        selected,
+        origin: origin ?? [0, 0],
+    }
+    return newNode
 }
 
 export type ExtendedNode = {
@@ -105,13 +126,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
             y: ((height / 2) - (llmNodeSize.height / 2)) * (1 / 0.9),
         };
 
-        const newNode: Node = {
-            id: '0',
-            position,
-            type: 'llmText',
-            data: {},
-            selected: true,
-        }
+        const newNode = createNewLlmTextNode({ position })
 
         reactFlowInstance.addNodes(newNode)
     }, [reactFlowInstance, newCanvas])
@@ -130,13 +145,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     x: cursorPosition.x,
                     y: cursorPosition.y,
                 })
-                const newNode: Node = {
-                    id: getId(),
-                    position: { x: nodePosition.x, y: nodePosition.y },
-                    type: 'llmText',
-                    data: {},
-                    selected: true,
-                }
+                const newNode = createNewLlmTextNode({ position: nodePosition })
                 setNodes((nds) => {
                     return nds.map((n) => {
                         return { ...n, selected: false }
@@ -184,14 +193,10 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     nodePosition.x += 200
                 }
 
-                const newNode: Node = {
-                    id: getId(),
+                const newNode = createNewLlmTextNode({
                     position: nodePosition,
-                    type: 'llmText',
-                    data: {},
-                    origin: [0.0, 0.5],
-                    selected: true,
-                }
+                    origin: [0.0, 0.5]
+                })
                 setNodes((nds) => nds.concat(newNode))
 
                 const newEdge: Edge = createEdge(connectionState.fromNode.id, newNode.id)
