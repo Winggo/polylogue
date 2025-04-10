@@ -30,17 +30,17 @@ def canvases_operations():
                 'y': float,
             },
             'data': {
-                'model': OptionalField(str),
-                'prompt': OptionalField(str),
-                'prompt_response': OptionalField(str),
+                'model': str,
+                'prompt': str,
+                'prompt_response': str,
                 'parent_ids': [str],
             },
-            'selected': OptionalField(bool),
-            'measured': OptionalField({
+            'selected': bool,
+            'measured': {
                 'width': float,
                 'height': float,
-            }),
-            'origin': OptionalField([float, float]),
+            },
+            'origin': [float, float],
         }],
         'createdBy': OptionalField(str),
     })
@@ -114,17 +114,17 @@ def canvas_operations(canvas_id):
                 'y': float,
             },
             'data': {
-                'model': OptionalField(str),
-                'prompt': OptionalField(str),
-                'prompt_response': OptionalField(str),
+                'model': str,
+                'prompt': str,
+                'prompt_response': str,
                 'parent_ids': [str],
             },
-            'selected': OptionalField(bool),
-            'measured': OptionalField({
+            'selected': bool,
+            'measured': {
                 'width': float,
                 'height': float,
-            }),
-            'origin': OptionalField([float, float]),
+            },
+            'origin': [float, float],
         }]),
     })
     def update_canvas(id):
