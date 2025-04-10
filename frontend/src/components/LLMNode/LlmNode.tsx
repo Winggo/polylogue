@@ -13,7 +13,6 @@ import { Skeleton } from "antd"
 import ReactMarkdown from 'react-markdown'
 
 import LLMNodeCard from "./LLMNodeCard"
-import LoadingWheel from "../../icons/LoadingWheel"
 import RightArrowCircle from "../../icons/RightArrowCircle"
 import DottedSquare from "../../icons/DottedSquare"
 import DownArrowCircle from "../../icons/DownArrowCircle"
@@ -47,6 +46,7 @@ export default function LLMNode ({
         model: existingModel,
         prompt: exstingPrompt,
         prompt_response: existingResponse,
+        setNode,
     } = data
 
     const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -123,6 +123,16 @@ export default function LLMNode ({
             }
         }
     }, [curPlaceholder, placeholderIndex, placeholder])
+
+    // Update ReactFlow nodes state every time node state is updated
+    useEffect(() => {
+        setNode(nodeId, {
+            model,
+            prompt,
+            promptResponse,
+            parentIds: parentNodes.map((nd) => nd.id),
+        })
+    }, [setNode, nodeId, model, prompt, promptResponse, parentNodes])
 
     const submitPrompt = async () => {
         const controller = new AbortController()
