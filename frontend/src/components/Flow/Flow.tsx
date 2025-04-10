@@ -102,7 +102,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
         const { width, height } = reactFlowWrapper.current.getBoundingClientRect()
         const position = {
             x: ((width / 2) - (llmNodeSize.width / 2)) * (1 / 0.86), // account for 0.9 zoom
-            y: (height / 2) * (1 / 0.9),
+            y: ((height / 2) - (llmNodeSize.height / 2)) * (1 / 0.9),
         };
 
         const newNode: Node = {
@@ -111,7 +111,6 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
             type: 'llmText',
             data: {},
             selected: true,
-            origin: [0.0, 0.5],
         }
 
         reactFlowInstance.addNodes(newNode)
