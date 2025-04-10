@@ -18,7 +18,7 @@ function NewCanvas() {
 
     useEffect(() => {
         // Generate ID only on the client side
-        setCanvasId(nanoid(8))
+        setCanvasId(nanoid(10))
     }, [])
 
     useEffect(() => {
