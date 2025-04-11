@@ -256,7 +256,10 @@ export default function LLMNode ({
                         target.style.height = `${target.scrollHeight}px`
                     }}
                 ></textarea>
-                {(selected || isHovered) ? <DownArrowCircle onClick={() => submitPrompt()} loading={loading} /> : <div className="h-[32px] w-[32px]"></div>}
+                {(selected || isHovered) ?
+                    <DownArrowCircle onClick={() => submitPrompt()} loading={loading} /> :
+                    <div className="h-[32px] w-[32px]"></div>
+                }
             </div>
             <div className={`border-t border-gray-300 mt-1 mb-1 group-focus-within:border-gray-800`}></div>
         </>
