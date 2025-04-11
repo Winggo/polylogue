@@ -1,6 +1,6 @@
 export const llmNodeSize = {
-    width: 500,
-    height: 600,
+    width: 600,
+    height: 700,
 }
 export const edgeStrokeColor = '#1F2937'
 export const edgeStrokeWidth = 3
