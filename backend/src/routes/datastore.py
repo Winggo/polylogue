@@ -20,14 +20,14 @@ def canvases_operations():
 
     @validate_json({
         'canvasId': str,
-        'title': str,
+        'title': OptionalField(str),
         'description': OptionalField(str),
         'nodes': [{
             'id': str,
             'type': str,
             'position': {
-                'x': float,
-                'y': float,
+                'x': (int, float),
+                'y': (int, float),
             },
             'data': {
                 'model': str,
@@ -37,10 +37,10 @@ def canvases_operations():
             },
             'selected': bool,
             'measured': {
-                'width': float,
-                'height': float,
+                'width': (int, float),
+                'height': (int, float),
             },
-            'origin': [float, float],
+            'origin': [(int, float)],
         }],
         'createdBy': OptionalField(str),
     })
@@ -63,7 +63,7 @@ def canvases_operations():
                 "canvases",
                 {
                     "canvas_id": data["canvasId"],
-                    "title": data["title"],
+                    "title": data.get("title"),
                     "description": data.get("description"),
                     "nodes": data["nodes"],
                     "created_by": data.get("createdBy"),
@@ -110,8 +110,8 @@ def canvas_operations(canvas_id):
             'id': str,
             'type': str,
             'position': {
-                'x': float,
-                'y': float,
+                'x': (int, float),
+                'y': (int, float),
             },
             'data': {
                 'model': str,
@@ -121,10 +121,10 @@ def canvas_operations(canvas_id):
             },
             'selected': bool,
             'measured': {
-                'width': float,
-                'height': float,
+                'width': (int, float),
+                'height': (int, float),
             },
-            'origin': [float, float],
+            'origin': [(int, float)],
         }]),
     })
     def update_canvas(id):
