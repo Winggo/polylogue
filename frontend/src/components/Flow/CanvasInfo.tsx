@@ -101,7 +101,7 @@ export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, sa
                     onChange={(e) => setCurCanvasTitle(e.target.value)}
                     variant="borderless"
                     size="large"
-                    className="!text-lg text-center"
+                    className="!text-lg text-center canvas-title-input"
                     maxLength={60}
                 />
             </Panel>

@@ -61,10 +61,6 @@ body {
     color: black;
 }
 
-.top-center-panel {
-    width: 500px;
-}
-
 .ant-input-affix-wrapper-focused {
     border-color: rgb(220, 143, 0) !important;
 }
@@ -77,4 +73,16 @@ body {
 
 .llm-node-card div span {
     line-height: 26px;
+}
+
+/* Canvas panels */
+.top-center-panel {
+    width: 500px;
+}
+.canvas-title-input {
+    padding-bottom: 0px !important;
+    border-radius: 0px !important;
+}
+.canvas-title-input:focus {
+    border-bottom: 1px solid black;
 }
