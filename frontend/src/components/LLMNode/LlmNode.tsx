@@ -126,6 +126,7 @@ export default function LLMNode ({
 
     // Update ReactFlow nodes state every time node state is updated
     useEffect(() => {
+        if (!setNode) return
         setNode(nodeId, {
             model,
             prompt,
