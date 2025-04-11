@@ -52,7 +52,7 @@ export default function LLMNode ({
     const inputRef = useRef<HTMLTextAreaElement>(null)
 
     const [placeholder, setPlaceholder] = useState("")
-    const [curPlaceholder, setCurPlaceholder] = useState("")
+    const [curPlaceholder, setCurPlaceholder] = useState("⇥ ")
     const [placeholderIndex, setPlaceholderIndex] = useState(0)
 
     const [model, setModel] = useState<keyof typeof modelMapping>(existingModel || initialModel)
