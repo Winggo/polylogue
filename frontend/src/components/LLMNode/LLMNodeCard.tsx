@@ -15,6 +15,8 @@ export default function LLMNodeCard() {
             <div className="cursor-text select-text text-center mb-[100px]">
                 <span>Click on → icon to create a connected node</span>
                 <br />
+                <span>Click and drag on → icon to form connections with other nodes</span>
+                <br />
                 <span>Press ⇥ to use suggested prompt</span>
                 <br />
                 <span>Click on ⋮⋮⋮ and drag to move node</span>
