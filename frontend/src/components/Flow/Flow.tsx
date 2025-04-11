@@ -316,7 +316,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
     const renderSaveModal = () => {
         return (
             <Modal
-                title="Save this canvas link to revisit your ideas 💡"
+                title="Save this canvas link to continue the conversation 💡"
                 centered
                 closable={false}
                 open={saveModalOpen}
@@ -334,7 +334,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                 cancelButtonProps={{ style: { display: 'none' } }}
                 afterClose={() => setCopyTooltipText("Copy Link")}
             >
-                <p className="mb-[5px]">Or... have your friends take a look</p>
+                <p className="mb-[5px]">Or... have your friends chime in</p>
                 <Input
                     value={`https://polylogue.dev/canvas/${canvasId}`}
                     variant='filled'
