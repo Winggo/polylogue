@@ -1,9 +1,6 @@
-import React from 'react'
+import { redirect } from 'next/navigation'
 
 
 export default function Index() {
-    return (
-        <h1>Hello World</h1>
-    )
+    redirect("/canvas")
 }
-
