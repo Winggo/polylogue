@@ -11,7 +11,7 @@ const polylogue = ['P', 'o', 'l', 'y', 'l', 'o', 'g', 'u', 'e', ' ', '💬']
 
 type CanvasInfo = {
     canvasId?: string,
-    canvasTitle?: string,
+    canvasTitle: string,
     handleSaveCanvas: Function,
     savingCanvas: boolean,
 }
@@ -89,7 +89,7 @@ export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, sa
             </Panel>
             {renderTopRightPanel()}
             <Panel position="top-center" className="text-lg font-medium !ml-0">
-                {canvasTitle || "New Canvas"}
+                {canvasTitle}
             </Panel>
             <Panel position="bottom-left" className="!z-3 text-black text-left text-md font">
                 x: {x.toFixed(2)}

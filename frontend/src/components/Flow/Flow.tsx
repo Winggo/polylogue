@@ -15,6 +15,7 @@ import {
 } from '@xyflow/react'
 import { Fade } from "react-awesome-reveal"
 import { nanoid } from 'nanoid'
+import { message } from "antd"
 
 import LLMNode from "../LLMNode/LlmNode"
 import CanvasInfo from "./CanvasInfo"
@@ -22,6 +23,7 @@ import {
     llmNodeSize,
     edgeStrokeColor,
     edgeStyles,
+    localBackendServerURL as backendServerURL,
 } from "../../utils/constants"
 
 
@@ -103,8 +105,10 @@ function createEdge(sourceId: string, targetId: string) {
 export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }: FlowProps) {
     const reactFlowInstance = useReactFlow()
     const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
+    const [messageApi, contextHolder] = message.useMessage()
     const [flowRendered, setFlowRendered] = useState(false)
     const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 })
+    const [curCanvasTitle, setCurCanvasTitle] = useState(canvasTitle ?? "New Canvas")
     const [savingCanvas, setSavingCanvas] = useState(false)
     const [nodes, setNodes, onNodesChange] = useNodesState<ExtendedNode>([])
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
@@ -199,8 +203,8 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
 
     const handleSaveCanvas = async () => {
         setSavingCanvas(true)
-        const saveNodes = nodes.map((node) => {
-            return {
+        try {
+            const saveNodes = nodes.map((node) => ({
                 id: node.id,
                 type: node.type,
                 position: node.position,
@@ -208,8 +212,38 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                 selected: node.selected,
                 measured: node.measured,
                 origin: node.origin,
+            }))
+            const response = await fetch(`${backendServerURL}/ds/v1/canvases`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    canvasId,
+                    title: curCanvasTitle,
+                    nodes: saveNodes,
+                }),
+            })
+            if (response.status === 200) {
+                messageApi.open({
+                    type: 'success',
+                    content: 'Saved successfully!',
+                    duration: 6,
+                })
+            } else {
+                messageApi.error({
+                    content: 'Cannot save canvas. Please try again in a moment.',
+                    duration: 6,
+                })
             }
-        })
+        } catch(err) {
+            messageApi.error({
+                content: 'Cannot save canvas. Please try again in a moment.',
+                duration: 6,
+            })
+        } finally {
+            setSavingCanvas(false)
+        }
     }
 
     const onConnect = useCallback(
@@ -266,6 +300,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
     return (
         <Fade delay={0} duration={1000} cascade damping={0.5} triggerOnce>
             <div className="h-screen w-screen bg-gray-200" ref={reactFlowWrapper}>
+                {contextHolder}
                 <ReactFlow
                     onInit={() => setFlowRendered(true)}
                     nodes={nodes}
@@ -285,7 +320,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     {flowRendered && (
                         <CanvasInfo
                             canvasId={canvasId}
-                            canvasTitle={canvasTitle}
+                            canvasTitle={curCanvasTitle}
                             handleSaveCanvas={handleSaveCanvas}
                             savingCanvas={savingCanvas}
                         />
