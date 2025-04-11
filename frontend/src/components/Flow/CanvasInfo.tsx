@@ -19,7 +19,7 @@ type CanvasInfo = {
 export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, savingCanvas }: CanvasInfo) { 
     const [x, y, zoom] = useStore(selector)
     const [curBrand, setCurBrand] = useState("")
-    const [curCanvasTitle, setCurCanvasTitle] = useState("New Canvas")
+    const [curCanvasTitle, setCurCanvasTitle] = useState("[Your Canvas]")
     const [copyTooltipTitle, setCopyTooltipTile] = useState("Copy canvas ID")
 
     useEffect(() => {
