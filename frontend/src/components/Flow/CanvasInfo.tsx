@@ -18,20 +18,20 @@ type CanvasInfo = {
 
 export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, savingCanvas }: CanvasInfo) { 
     const [x, y, zoom] = useStore(selector)
-    const [curTitle, setCurTitle] = useState("")
+    const [curBrand, setCurBrand] = useState("")
     const [curCanvasTitle, setCurCanvasTitle] = useState("New Canvas")
     const [copyTooltipTitle, setCopyTooltipTile] = useState("Copy canvas ID")
 
     useEffect(() => {
-        if (curTitle !== 'Polylogue 💬') {
+        if (curBrand !== 'Polylogue 💬') {
             const timer = setTimeout(() => {
-                setCurTitle(curTitle + polylogue[curTitle.length])
+                setCurBrand(curBrand + polylogue[curBrand.length])
             }, 20)
             return () => {
                 clearTimeout(timer)
             }
         }
-    }, [curTitle])
+    }, [curBrand])
 
     useEffect(() => {
         if (canvasTitle) {
@@ -92,7 +92,7 @@ export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, sa
     return (
         <>
             <Panel position="top-left" className="text-black">
-                <p className="text-2xl font-bold mt-[-6px] cursor-default">{curTitle}</p>
+                <p className="text-2xl font-bold mt-[-6px] cursor-default">{curBrand}</p>
             </Panel>
             {renderTopRightPanel()}
             <Panel position="top-center">
