@@ -106,7 +106,7 @@ export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, sa
                 />
             </Panel>
             <Panel position="bottom-left" className="!z-3 text-black text-left text-md font">
-                x: {x.toFixed(2)}
+                x: {(-x).toFixed(2)}
                 <br />
                 y: {y.toFixed(2)}
                 <br />
