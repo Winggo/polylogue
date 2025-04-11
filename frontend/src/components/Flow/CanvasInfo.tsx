@@ -115,7 +115,7 @@ export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, sa
             <Panel position="bottom-center" className="!z-3 text-black text-center !ml-0">
                 Press ⌘+' to create new nodes
                 <br />
-                Click and drag background to move across canvas
+                Drag on background to move across canvas
                 <br />
                 Scroll with mouse or pinch on trackpad to zoom in & out
             </Panel>
