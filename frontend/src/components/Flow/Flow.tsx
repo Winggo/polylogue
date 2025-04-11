@@ -15,7 +15,8 @@ import {
 } from '@xyflow/react'
 import { Fade } from "react-awesome-reveal"
 import { nanoid } from 'nanoid'
-import { message } from "antd"
+import { Modal, Input, Tooltip, message } from "antd"
+import { CopyFilled } from "@ant-design/icons"
 
 import LLMNode from "../LLMNode/LlmNode"
 import CanvasInfo from "./CanvasInfo"
@@ -107,6 +108,8 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
     const [flowRendered, setFlowRendered] = useState(false)
     const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 })
     const [savingCanvas, setSavingCanvas] = useState(false)
+    const [saveModalOpen, setSaveModalOpen] = useState(false)
+    const [copyTooltipText, setCopyTooltipText] = useState("Copy Link")
     const [nodes, setNodes, onNodesChange] = useNodesState<ExtendedNode>([])
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
 
@@ -231,18 +234,28 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                 messageApi.open({
                     type: 'success',
                     content: 'Saved successfully!',
-                    duration: 6,
+                    duration: 5,
+                    style: {
+                        marginTop: '50px',
+                    },
                 })
+                setSaveModalOpen(true)
             } else {
                 messageApi.error({
                     content: 'Cannot save canvas. Please try again in a moment.',
-                    duration: 6,
+                    duration: 5,
+                    style: {
+                        marginTop: '50px',
+                    },
                 })
             }
         } catch(err) {
             messageApi.error({
                 content: 'Cannot save canvas. Please try again in a moment.',
-                duration: 6,
+                duration: 5,
+                style: {
+                    marginTop: '50px',
+                },
             })
         } finally {
             setSavingCanvas(false)
@@ -300,6 +313,48 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
         [reactFlowInstance, setEdges, setNodes],
     )
 
+    const renderSaveModal = () => {
+        return (
+            <Modal
+                title="Save this canvas link to revisit your ideas 💡"
+                centered
+                closable={false}
+                open={saveModalOpen}
+                onOk={() => setSaveModalOpen(false)}
+                okText="Got it"
+                okType="default"
+                okButtonProps={{
+                    style: {
+                        border: '2px solid gray',
+                        boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.1)',
+                        fontFamily: 'Barlow',
+                        fontWeight: 500,
+                    }
+                }}
+                cancelButtonProps={{ style: { display: 'none' } }}
+                afterClose={() => setCopyTooltipText("Copy Link")}
+            >
+                <p className="mb-[5px]">Or... have your friends take a look</p>
+                <Input
+                    value={`https://polylogue.dev/canvas/${canvasId}`}
+                    variant='filled'
+                    suffix={
+                        <Tooltip
+                            title={copyTooltipText}
+                        >
+                            <CopyFilled
+                                onClick={() => {
+                                    navigator.clipboard.writeText(`https://polylogue.dev/canvas/${canvasId}`)
+                                    setCopyTooltipText("Copied!")
+                                }}
+                            />
+                        </Tooltip>
+                    }
+                />
+            </Modal>
+        )
+    }
+
     return (
         <Fade delay={0} duration={1000} cascade damping={0.5} triggerOnce>
             <div className="h-screen w-screen bg-gray-200" ref={reactFlowWrapper}>
@@ -330,6 +385,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     )}
                 </ReactFlow>
             </div>
+            {renderSaveModal()}
         </Fade>
     )
 }

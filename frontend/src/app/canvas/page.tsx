@@ -27,7 +27,10 @@ function NewCanvas() {
             const canvasId = error.replace("canvas-not-found-", "")
             messageApi.error({
                 content: `Cannot find canvas with ID ${canvasId}. Redirected to new canvas page.`,
-                duration: 6,
+                duration: 5,
+                style: {
+                    marginTop: '50px',
+                },
             })
             router.replace("/canvas")
         }

@@ -65,6 +65,10 @@ body {
     width: 500px;
 }
 
+.ant-input-affix-wrapper-focused {
+    border-color: rgb(220, 143, 0) !important;
+}
+
 /* LLM node */
 .prompt-output p,
 .prompt-output li {
