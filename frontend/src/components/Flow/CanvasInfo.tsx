@@ -95,13 +95,14 @@ export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, sa
                 <p className="text-2xl font-bold mt-[-6px] cursor-default">{curBrand}</p>
             </Panel>
             {renderTopRightPanel()}
-            <Panel position="top-center">
+            <Panel position="top-center" className="top-center-panel">
                 <Input
                     value={curCanvasTitle}
                     onChange={(e) => setCurCanvasTitle(e.target.value)}
                     variant="borderless"
                     size="large"
-                    className="!text-lg"
+                    className="!text-lg text-center"
+                    maxLength={60}
                 />
             </Panel>
             <Panel position="bottom-left" className="!z-3 text-black text-left text-md font">

@@ -61,6 +61,10 @@ body {
     color: black;
 }
 
+.top-center-panel {
+    width: 500px;
+}
+
 /* LLM node */
 .prompt-output p,
 .prompt-output li {
