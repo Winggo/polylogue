@@ -21,7 +21,7 @@ context_prompt_question_template = PromptTemplate(
     input_variables=["context"],
     template="""Given the following context, generate a thoughtful follow up question intended to trigger the user's curisoity.
 If there is no context provided, generate a question users may be curious to know the answer to.
-Keep this question no longer than 7 non-very long words. Always end with a question mark.
+Keep this question no longer than 10 non-very long words. Always end with a question mark.
 *Context:*
 {context}"""
 )
