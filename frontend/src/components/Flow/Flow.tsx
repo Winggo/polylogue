@@ -134,10 +134,14 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
         const { width, height } = reactFlowWrapper.current.getBoundingClientRect()
         const position = {
             x: ((width / 2) - (llmNodeSize.width / 2)) * (1 / 0.86), // account for 0.9 zoom
-            y: ((height / 2) - (llmNodeSize.height / 2)) * (1 / 0.9),
+            y: (height / 2) * (1 / 0.9),
         };
 
-        const newNode = createNewLlmTextNode({ position, data: { setNode } })
+        const newNode = createNewLlmTextNode({
+            position,
+            data: { setNode },
+            origin: [0.0, 0.5],
+        })
 
         reactFlowInstance.addNodes(newNode)
     }, [])
@@ -241,7 +245,8 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
 
                 const newNode = createNewLlmTextNode({
                     position: nodePosition,
-                    origin: [0.0, 0.5]
+                    origin: [0.0, 0.5],
+                    data: { setNode },
                 })
                 setNodes((nds) => nds.concat(newNode))
 
@@ -277,7 +282,11 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     defaultViewport={{ x: 0, y: 0, zoom: 0.9 }}
                 >
                     <Background gap={25} />
-                    {flowRendered && <CanvasInfo canvasId={canvasId} canvasTitle={canvasTitle} />}
+                    {flowRendered && (
+                        <CanvasInfo
+                            canvasId={canvasId}
+                            canvasTitle={canvasTitle}
+                            handleSaveCanvas={handleSaveCanvas}
                             savingCanvas={savingCanvas}
                         />
                     )}
