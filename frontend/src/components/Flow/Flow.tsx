@@ -35,36 +35,46 @@ type createNewLlmTextNodeParams = {
     position: { x: number, y: number },
     selected?: boolean,
     origin?: [number, number] | null,
+    data?: object,
 }
 
 function createNewLlmTextNode(
-    {position, selected=true, origin=null}
-    : createNewLlmTextNodeParams): Node {
+    {position, selected=true, origin, data={}}
+    : createNewLlmTextNodeParams): ExtendedNode {
     const newNode = {
         id: nanoid(10),
         position,
         type: 'llmText',
-        data: {},
+        data: data as ExtendedNodeData,
         selected,
         origin: origin ?? [0, 0],
+        measured: llmNodeSize,
     }
     return newNode
 }
 
-export type ExtendedNode = {
+export type ExtendedNodeData = {
+    model?: string,
+    prompt?: string,
+    prompt_response?: string,
+    parent_ids?: Array<string>,
+    setNode: Function,
+}
+
+export type ExtendedNode = Node & {
     id: string,
     type: string,
     position: {
         x: number,
         y: number,
     },
-    data: {
-        model?: string,
-        prompt?: string,
-        prompt_response?: string,
-        parent_ids: Array<string>,
+    data: ExtendedNodeData,
+    selected: boolean,
+    measured: {
+        width: number,
+        height: number,
     },
-    selected?: boolean,
+    origin: number[],
 }
 
 type FlowProps = {
@@ -95,7 +105,8 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
     const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
     const [flowRendered, setFlowRendered] = useState(false)
     const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 })
-    const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
+    const [savingCanvas, setSavingCanvas] = useState(false)
+    const [nodes, setNodes, onNodesChange] = useNodesState<ExtendedNode>([])
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
 
     // Existing nodes present, create edges for them
@@ -126,10 +137,10 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
             y: ((height / 2) - (llmNodeSize.height / 2)) * (1 / 0.9),
         };
 
-        const newNode = createNewLlmTextNode({ position })
+        const newNode = createNewLlmTextNode({ position, data: { setNode } })
 
         reactFlowInstance.addNodes(newNode)
-    }, [reactFlowInstance, newCanvas])
+    }, [])
 
     // Create new node on Cmd/Ctrl + '
     useEffect(() => {
@@ -145,7 +156,10 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     x: cursorPosition.x,
                     y: cursorPosition.y,
                 })
-                const newNode = createNewLlmTextNode({ position: nodePosition })
+                const newNode = createNewLlmTextNode({
+                    position: nodePosition,
+                    data: { setNode },
+                })
                 setNodes((nds) => {
                     return nds.map((n) => {
                         return { ...n, selected: false }
@@ -161,6 +175,38 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
             window.removeEventListener('keydown', handleKeyDown)
         }
     }, [setNodes, cursorPosition])
+
+    const setNode = (nodeId: string, newData: ExtendedNodeData) => {
+        return setNodes((nds) => 
+            nds.map((node) => {
+                if (node.id === nodeId) {
+                    return {
+                        ...node,
+                        data: {
+                            ...node.data,
+                            ...newData,
+                        }
+                    }
+                }
+                return node
+            })
+        )
+    }
+
+    const handleSaveCanvas = async () => {
+        setSavingCanvas(true)
+        const saveNodes = nodes.map((node) => {
+            return {
+                id: node.id,
+                type: node.type,
+                position: node.position,
+                data: node.data,
+                selected: node.selected,
+                measured: node.measured,
+                origin: node.origin,
+            }
+        })
+    }
 
     const onConnect = useCallback(
         (connection: Connection) => setEdges(
@@ -232,6 +278,9 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                 >
                     <Background gap={25} />
                     {flowRendered && <CanvasInfo canvasId={canvasId} canvasTitle={canvasTitle} />}
+                            savingCanvas={savingCanvas}
+                        />
+                    )}
                 </ReactFlow>
             </div>
         </Fade>

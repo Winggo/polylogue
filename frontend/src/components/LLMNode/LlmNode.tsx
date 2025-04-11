@@ -129,8 +129,8 @@ export default function LLMNode ({
         setNode(nodeId, {
             model,
             prompt,
-            promptResponse,
-            parentIds: parentNodes.map((nd) => nd.id),
+            prompt_response: promptResponse,
+            parent_ids: parentNodes.map((nd) => nd.id),
         })
     }, [setNode, nodeId, model, prompt, promptResponse, parentNodes])
 
