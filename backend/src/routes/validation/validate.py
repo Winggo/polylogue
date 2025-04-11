@@ -79,11 +79,11 @@ def _validate_schema(data: Any, schema: Any, path: str = "") -> List[str]:
     elif isinstance(schema, tuple):
         if not isinstance(data, schema):
             type_names = " or ".join([t.__name__ for t in schema])
-            errors.append(f"{path} must be of type {type_names}")
+            errors.append(f"{path} must be of type {type_names}. It is of type {type(data).__name__}.")
 
     elif isinstance(schema, type):
         if not isinstance(data, schema):
-            errors.append(f"{path} must be of type {schema.__name__}")
+            errors.append(f"{path} must be of type {schema.__name__}. It is of type {type(data).__name__}.")
 
     else:
         errors.append(f"{path} has an unsupported schema definition")
