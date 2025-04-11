@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Controls, ControlButton, Panel, useStore } from "@xyflow/react"
-import { Button, Tooltip } from "antd"
+import { Button, Tooltip, Input } from "antd"
 import '@ant-design/v5-patch-for-react-19'
 
 import CopyIcon from "../../icons/CopyIcon"
@@ -11,7 +11,7 @@ const polylogue = ['P', 'o', 'l', 'y', 'l', 'o', 'g', 'u', 'e', ' ', '💬']
 
 type CanvasInfo = {
     canvasId?: string,
-    canvasTitle: string,
+    canvasTitle?: string,
     handleSaveCanvas: Function,
     savingCanvas: boolean,
 }
@@ -19,6 +19,7 @@ type CanvasInfo = {
 export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, savingCanvas }: CanvasInfo) { 
     const [x, y, zoom] = useStore(selector)
     const [curTitle, setCurTitle] = useState("")
+    const [curCanvasTitle, setCurCanvasTitle] = useState("New Canvas")
     const [copyTooltipTitle, setCopyTooltipTile] = useState("Copy canvas ID")
 
     useEffect(() => {
@@ -31,6 +32,12 @@ export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, sa
             }
         }
     }, [curTitle])
+
+    useEffect(() => {
+        if (canvasTitle) {
+            setCurCanvasTitle(canvasTitle)
+        }
+    }, [canvasTitle])
 
     const renderTopRightPanel = () => {
         if (!canvasId) return
@@ -48,7 +55,7 @@ export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, sa
                     <Button
                         className=" mt-[5px] mb-[5px] !pl-[20px] !pr-[20px] !pt-[20px] !pb-[20px] !shadow-xl"
                         loading={savingCanvas}
-                        onClick={() => handleSaveCanvas()}
+                        onClick={() => handleSaveCanvas({ curCanvasTitle })}
                     >
                         <div className="font-semibold">Save Canvas</div>
                     </Button>
@@ -88,8 +95,14 @@ export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, sa
                 <p className="text-2xl font-bold mt-[-6px] cursor-default">{curTitle}</p>
             </Panel>
             {renderTopRightPanel()}
-            <Panel position="top-center" className="text-lg font-medium !ml-0">
-                {canvasTitle}
+            <Panel position="top-center">
+                <Input
+                    value={curCanvasTitle}
+                    onChange={(e) => setCurCanvasTitle(e.target.value)}
+                    variant="borderless"
+                    size="large"
+                    className="!text-lg"
+                />
             </Panel>
             <Panel position="bottom-left" className="!z-3 text-black text-left text-md font">
                 x: {x.toFixed(2)}

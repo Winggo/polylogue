@@ -108,7 +108,6 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
     const [messageApi, contextHolder] = message.useMessage()
     const [flowRendered, setFlowRendered] = useState(false)
     const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 })
-    const [curCanvasTitle, setCurCanvasTitle] = useState(canvasTitle ?? "New Canvas")
     const [savingCanvas, setSavingCanvas] = useState(false)
     const [nodes, setNodes, onNodesChange] = useNodesState<ExtendedNode>([])
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
@@ -201,7 +200,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
         )
     }
 
-    const handleSaveCanvas = async () => {
+    const handleSaveCanvas = async ({ curCanvasTitle }: { curCanvasTitle: string }) => {
         setSavingCanvas(true)
         try {
             const saveNodes = nodes.map((node) => ({
@@ -320,7 +319,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     {flowRendered && (
                         <CanvasInfo
                             canvasId={canvasId}
-                            canvasTitle={curCanvasTitle}
+                            canvasTitle={canvasTitle}
                             handleSaveCanvas={handleSaveCanvas}
                             savingCanvas={savingCanvas}
                         />
