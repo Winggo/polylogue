@@ -110,7 +110,24 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
     const [nodes, setNodes, onNodesChange] = useNodesState<ExtendedNode>([])
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
 
-    // Existing nodes present, create edges for them
+    const setNode = useCallback((nodeId: string, newData: ExtendedNodeData) => {
+        setNodes((nds) =>
+            nds.map((node) => {
+                if (node.id === nodeId) {
+                    return {
+                        ...node,
+                        data: {
+                            ...node.data,
+                            ...newData,
+                        }
+                    }
+                }
+                return node
+            })
+        )
+    }, [setNodes])
+
+    // Existing nodes present, create edges & pass down setNodes for them
     useEffect(() => {
         if (existingNodes) {
             const edgesForExistingNodes: Edge[] = []
@@ -123,7 +140,13 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     }   
                 }
             }
-            setNodes((nds) => nds.concat(existingNodes || []))
+            setNodes((nds) => nds.concat(existingNodes || []).map((node) => ({
+                ...node,
+                data: {
+                    ...node.data,
+                    setNode,
+                }
+            })))
             setEdges((eds) => eds.concat(edgesForExistingNodes))
         }
     }, [existingNodes])
@@ -180,23 +203,6 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
             window.removeEventListener('keydown', handleKeyDown)
         }
     }, [setNodes, cursorPosition])
-
-    const setNode = (nodeId: string, newData: ExtendedNodeData) => {
-        return setNodes((nds) => 
-            nds.map((node) => {
-                if (node.id === nodeId) {
-                    return {
-                        ...node,
-                        data: {
-                            ...node.data,
-                            ...newData,
-                        }
-                    }
-                }
-                return node
-            })
-        )
-    }
 
     const handleSaveCanvas = async ({ curCanvasTitle }: { curCanvasTitle: string }) => {
         setSavingCanvas(true)
