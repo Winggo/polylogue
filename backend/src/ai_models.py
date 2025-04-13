@@ -13,7 +13,11 @@ mistral_7b_together_model = ChatTogether(
     together_api_key=os.getenv("TOGETHER_API_KEY"),
     temperature=0.7,
 )
-llama_3_3_70b_instruct_together_model = ChatTogether(
+mixtral_8x7b_together_model = ChatTogether(
+    model="mistralai/Mixtral-8x7B-Instruct-v0.1",
+    together_api_key=os.getenv("TOGETHER_API_KEY"),
+)
+llama_3_3_70b_together_model = ChatTogether(
     model="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
     together_api_key=os.getenv("TOGETHER_API_KEY")
 )
@@ -30,8 +34,10 @@ claude_sonnet_model = ChatAnthropic(
 def get_model(model_name):
     if model_name == "mistral-7b":
         llm = mistral_7b_together_model
+    elif model_name == "mixtral-8x7b":
+        llm = mixtral_8x7b_together_model
     elif model_name == "llama-3.3-70b":
-        llm = llama_3_3_70b_instruct_together_model
+        llm = llama_3_3_70b_together_model
     elif model_name == "gpt-4o":
         llm = gpt_4o_model
     elif model_name == "claude-sonnet":
