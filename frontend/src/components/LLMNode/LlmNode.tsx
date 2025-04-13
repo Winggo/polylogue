@@ -27,12 +27,18 @@ type LLMNodeProps = {
     data: Record<string, any>
 }
 
-const initialModel = "gpt-4o"
+const initialModel = "mistral-7b"
 const models = [
+    { value: "mistral-7b", label: "Mistral 7B" },
+    { value: "llama-3.3-70b", label: "Llama 3.3 70B" },
+    { value: "deepseek-r1-distill-llama-70b", label: "Deepseek R1 Distill Llama 70B" },
     { value: "gpt-4o", label: "GPT-4o" },
     { value: "claude-sonnet", label: "Claude 3.5 Sonnet" },
 ]
 const modelMapping = {
+    "mistral-7b": "Mistral 7B",
+    "llama-3.3-70b": "Llama 3.3 70B",
+    "deepseek-r1-distill-llama-70b": "Deepseek R1 Distill Llama 70B",
     "gpt-4o": "GPT-4o",
     "claude-sonnet": "Claude 3.5 Sonnet",
 }
@@ -218,7 +224,9 @@ export default function LLMNode ({
     const renderHeaders = () => (
         <>
             <DottedSquare />
-            <div className="absolute top-[-26px] right-[30px] w-[150px] h-[20px] text-black pointer-events-none text-right">{modelMapping[model]}</div>
+            <div className="absolute top-[-26px] right-[30px] w-[300px] h-[20px] text-black pointer-events-none text-right">
+                {modelMapping[model]}
+            </div>
         </>
     )
 

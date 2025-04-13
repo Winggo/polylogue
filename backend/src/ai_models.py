@@ -1,5 +1,6 @@
 import json
 import os
+from langchain_together import ChatTogether
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain.prompts import PromptTemplate
@@ -7,14 +8,43 @@ from langchain_core.runnables import RunnableLambda
 from functools import partial
 
 
+mistral_7b_together_model = ChatTogether(
+    model="mistralai/Mistral-7B-Instruct-v0.3",
+    together_api_key=os.getenv("TOGETHER_API_KEY")
+)
+llama_3_3_70b_instruct_together_model = ChatTogether(
+    model="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+    together_api_key=os.getenv("TOGETHER_API_KEY")
+)
+deepseek_r1_distill_llama_70b_together_model = ChatTogether(
+    model="deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free",
+    together_api_key=os.getenv("TOGETHER_API_KEY")
+)
 gpt_4o_model = ChatOpenAI(
-    api_key=os.getenv("OPENAI_API_KEY"),
     model="gpt-4o",
+    api_key=os.getenv("OPENAI_API_KEY"),
 )
 claude_sonnet_model = ChatAnthropic(
-    api_key=os.getenv("ANTHROPIC_API_KEY"),
     model="claude-3-5-sonnet-20240620",
+    api_key=os.getenv("ANTHROPIC_API_KEY"),
 )
+
+
+def get_model(model_name):
+    if model_name == "mistral-7b":
+        llm = mistral_7b_together_model
+    elif model_name == "llama-3.3-70b":
+        llm = llama_3_3_70b_instruct_together_model
+    elif model_name == "deepseek-r1-distill-llama-70b":
+        llm = deepseek_r1_distill_llama_70b_together_model
+    elif model_name == "gpt-4o":
+        llm = gpt_4o_model
+    elif model_name == "claude-sonnet":
+        llm = claude_sonnet_model
+    else:
+        raise ValueError(f"Unsupported model type: {model_name}")
+    
+    return llm
 
 
 context_prompt_question_template = PromptTemplate(
@@ -59,7 +89,7 @@ def generate_prompt_question(redis, parent_nodes):
     parent_responses = get_parent_responses(redis, parent_nodes=parent_nodes)
     context = "\n\n".join(parent_responses)
 
-    chain = context_prompt_question_template | gpt_4o_model
+    chain = context_prompt_question_template | mistral_7b_together_model
     prompt_question = chain.invoke({ "context": context })
     
     return prompt_question.content if hasattr(prompt_question, 'content') else str(prompt_question)
@@ -74,12 +104,7 @@ def generate_response_with_context(
     parent_responses = get_parent_responses(redis, parent_node_ids)
     context = "\n\n".join(parent_responses)
 
-    if model == "gpt-4o":
-        llm = gpt_4o_model
-    elif model == "claude-sonnet":
-        llm = claude_sonnet_model
-    else:
-        raise ValueError(f"Unsupported model type: {model}")
+    llm = get_model(model)
 
     chain = context_prompt_template | llm
 
@@ -126,10 +151,7 @@ def generate_chained_responses(redis, cur_node):
 
     node_operations = []
     for node in ancestor_nodes:
-        if node["model"] == "claude-sonnet":
-            llm = claude_sonnet_model
-        else:
-            llm = gpt_4o_model
+        llm = get_model(node["model"])
 
         prompt_input_key = f"node-input-prompt-{node['id']}"
         output_key = f"node-output-{node['id']}"
