@@ -10,7 +10,8 @@ from functools import partial
 
 mistral_7b_together_model = ChatTogether(
     model="mistralai/Mistral-7B-Instruct-v0.3",
-    together_api_key=os.getenv("TOGETHER_API_KEY")
+    together_api_key=os.getenv("TOGETHER_API_KEY"),
+    temperature=0.7,
 )
 llama_3_3_70b_instruct_together_model = ChatTogether(
     model="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
@@ -49,9 +50,10 @@ def get_model(model_name):
 
 context_prompt_question_template = PromptTemplate(
     input_variables=["context"],
-    template="""Given the following context, generate a thoughtful follow up question intended to trigger the user's curisoity.
-If there is no context provided, generate a question users may be curious to know the answer to.
-Keep this question no longer than 10 non-very long words. Always end with a question mark.
+    template="""Given the following context, generate a simple follow up question intended to induce curisoity.
+If no context is provided, generate a question users will be curious to know the answer to.
+Always end with a question mark. Do not surround the question in quotes.
+*IMPORTANT: GENERATED QUESTION NEEDS TO USE LESS THAN 10 WORDS*.
 *Context:*
 {context}"""
 )
@@ -59,9 +61,9 @@ Keep this question no longer than 10 non-very long words. Always end with a ques
 
 context_prompt_template = PromptTemplate(
     input_variables=["context", "prompt"],
-    template="""Given the following context and prompt, reply thoughtfully in less than 180 words.
-There may be no context provided. Do not mention the response name or the context name in your response.
-For better readability, divide your response into paragraphs, use bullet points or numbered lists, and use markdown where appropriate.
+    template="""Given the following context and prompt, reply thoughtfully in *LESS THAN 180 WORDS*.
+There may be no context provided. Do not mention the response or context name.
+For readability, divide your response into paragraphs, use bullet points or numbered lists, and use markdown whenever appropriate.
 Add newlines between each bullet point. Try ending the response with a question to encourage discussion.
 *Context:*
 {context}
