@@ -17,10 +17,6 @@ llama_3_3_70b_instruct_together_model = ChatTogether(
     model="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
     together_api_key=os.getenv("TOGETHER_API_KEY")
 )
-deepseek_r1_distill_llama_70b_together_model = ChatTogether(
-    model="deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free",
-    together_api_key=os.getenv("TOGETHER_API_KEY")
-)
 gpt_4o_model = ChatOpenAI(
     model="gpt-4o",
     api_key=os.getenv("OPENAI_API_KEY"),
@@ -36,8 +32,6 @@ def get_model(model_name):
         llm = mistral_7b_together_model
     elif model_name == "llama-3.3-70b":
         llm = llama_3_3_70b_instruct_together_model
-    elif model_name == "deepseek-r1-distill-llama-70b":
-        llm = deepseek_r1_distill_llama_70b_together_model
     elif model_name == "gpt-4o":
         llm = gpt_4o_model
     elif model_name == "claude-sonnet":
