@@ -65,6 +65,10 @@ body {
     border-color: rgb(220, 143, 0) !important;
 }
 
+.ant-popconfirm-description {
+    margin-top: 2px !important;
+}
+
 /* LLM node */
 .prompt-output p,
 .prompt-output li {

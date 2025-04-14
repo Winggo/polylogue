@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react"
+import { useRouter } from 'next/navigation'
 import { Controls, ControlButton, Panel, useStore } from "@xyflow/react"
-import { Button, Tooltip, Input } from "antd"
+import { Button, Tooltip, Input, Popconfirm } from "antd"
+import { WarningOutlined } from "@ant-design/icons"
 import '@ant-design/v5-patch-for-react-19'
 
 import CopyIcon from "../../icons/CopyIcon"
@@ -17,6 +19,7 @@ type CanvasInfo = {
 }
 
 export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, savingCanvas }: CanvasInfo) { 
+    const router = useRouter()
     const [x, y, zoom] = useStore(selector)
     const [curBrand, setCurBrand] = useState("")
     const [curCanvasTitle, setCurCanvasTitle] = useState("[Your Canvas]")
@@ -45,7 +48,7 @@ export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, sa
             <><Panel position="top-right" className="text-black text-right">
                 <Tooltip
                     title={<div>
-                        <b>Save & Retrieve link</b>
+                        <b>Save & copy link</b>
                         <br />
                         <span>Revisit with link or share with others</span>
                     </div>}
@@ -92,7 +95,28 @@ export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, sa
     return (
         <>
             <Panel position="top-left" className="text-black">
-                <p className="text-2xl font-bold mt-[-6px] cursor-default">{curBrand}</p>
+                <Popconfirm
+                    title="Go to new canvas page"
+                    description="Save your canvas before leaving!"
+                    onConfirm={() => router.push("/canvas")}
+                    onCancel={() => {}}
+                    okText="Yes"
+                    okType="default"
+                    okButtonProps={{
+                        style: {
+                            border: '2px solid gray',
+                            boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.1)',
+                            fontFamily: 'Barlow',
+                            fontWeight: 500,
+                        }
+                    }}
+                    cancelText="No"
+                    icon={<WarningOutlined style={{ color: "red" }} />}
+                >
+                    <p className="text-2xl font-bold mt-[-6px] cursor-pointer">
+                        {curBrand}
+                    </p>
+                </Popconfirm>
             </Panel>
             {renderTopRightPanel()}
             <Panel position="top-center" className="top-center-panel">
