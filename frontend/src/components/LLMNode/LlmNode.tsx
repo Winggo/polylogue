@@ -32,15 +32,15 @@ const models = [
     { value: "mistral-7b", label: "Mistral 7B" },
     { value: "mixtral-8x7b", label: "Mixtral 8x7B" },
     { value: "llama-3.3-70b", label: "Llama 3.3 70B" },
-    { value: "gpt-4o", label: "GPT-4o" },
-    { value: "claude-sonnet", label: "Claude 3.5 Sonnet" },
+    { value: "gpt-4o", label: "GPT-4o", apiKeyRequired: true },
+    { value: "claude-sonnet", label: "Claude 3.5", apiKeyRequired: true },
 ]
 const modelMapping = {
     "mistral-7b": "Mistral 7B",
     "mixtral-8x7b": "Mixtral 8x7B",
     "llama-3.3-70b": "Llama 3.3 70B",
     "gpt-4o": "GPT-4o",
-    "claude-sonnet": "Claude 3.5 Sonnet",
+    "claude-sonnet": "Claude 3.5",
 }
 
 export default function LLMNode ({
@@ -192,8 +192,8 @@ export default function LLMNode ({
                 >
                     <option value="" disabled>Select a model</option>
                     {models.map((model) => (
-                        <option key={model.value} value={model.value}>
-                            {model.label}
+                        <option key={model.value} value={model.value} disabled={model.apiKeyRequired}>
+                            {model.apiKeyRequired ? `${model.label} (Future feature)` : model.label}
                         </option>
                     ))}
                 </select>
