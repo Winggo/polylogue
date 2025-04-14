@@ -65,7 +65,7 @@ def canvases_operations():
                     "canvas_id": data["canvasId"],
                     "title": data.get("title"),
                     "description": data.get("description"),
-                    "nodes": data["nodes"],
+                    "nodes": transform_nodes_arr_to_map(data["nodes"]),
                     "created_by": data.get("createdBy"),
                     "created_at": datetime.now(),
                     "updated_at": datetime.now(),
@@ -95,6 +95,7 @@ def canvas_operations(canvas_id):
         """Get a canvas document from datastore"""
         try:
             canvas_doc = get_document_by_collection_and_id(db, "canvases", id)
+            canvas_doc["nodes"] = transform_nodes_map_to_arr(canvas_doc["nodes"])
         except ValueError as e:
             return jsonify({"error": str(e)}), 400
         except Exception as e:
@@ -140,6 +141,8 @@ def canvas_operations(canvas_id):
         data = request.json
         try:
             data["updated_at"] = datetime.now()
+            if "nodes" in data:
+                data["nodes"] = transform_nodes_arr_to_map(data["nodes"])
             doc_id = update_document_in_collection(db, "canvases", data, doc_id=id)
         except ValueError as e:
             return jsonify({"error": str(e)}), 400
@@ -155,3 +158,18 @@ def canvas_operations(canvas_id):
         return update_canvas(canvas_id)
     else:
         return jsonify({"error": "Internal Server Error"}), 500
+
+
+
+def transform_nodes_arr_to_map(nodes_arr):
+    nodes_map = {}
+    for node in nodes_arr:
+        nodes_map[node['id']] = node
+    return nodes_map
+
+
+def transform_nodes_map_to_arr(nodes_map):
+    nodes = []
+    for node in nodes_map.values():
+        nodes.append(node)
+    return nodes
