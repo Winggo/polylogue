@@ -24,7 +24,7 @@ r_client = start_redis_client()
 app.config['REDIS'] = r_client
 
 
-ds_client = start_firestore_project_client("polylogue-2025")
+ds_client = start_firestore_project_client(os.environ["GCP_PROJECT"])
 app.config['FIRESTORE'] = ds_client
 
 
