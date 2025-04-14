@@ -53,6 +53,7 @@ export default function LLMNode ({
         prompt: exstingPrompt,
         prompt_response: existingResponse,
         setNode,
+        canvasId,
     } = data
 
     const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -157,6 +158,7 @@ export default function LLMNode ({
                     prompt,
                     nodeId,
                     parentNodes,
+                    canvasId,
                 }),
                 signal: controller.signal,
             })

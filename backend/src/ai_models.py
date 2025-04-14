@@ -6,6 +6,7 @@ from langchain_anthropic import ChatAnthropic
 from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnableLambda
 from functools import partial
+from db.firestore import get_document_by_collection_and_id
 
 
 mistral_7b_together_model = ChatTogether(
@@ -74,21 +75,45 @@ Add newlines between each bullet point. Try ending the response with a question 
 )
 
 
-def get_parent_responses(redis, parent_node_ids=None, parent_nodes=None) -> list:
-    parent_node_ids, parent_nodes = parent_node_ids or [], parent_nodes or []
-    if not parent_node_ids and parent_nodes:
-        parent_node_ids = [parent["id"] for parent in parent_nodes]
+def get_parent_responses(redis, db, parent_nodes=None) -> list:
+    if not parent_nodes:
+        return []
+
     prev_chat_responses = []
-    for index, node_id in enumerate(parent_node_ids):
-        if redis.exists(f"node:{node_id}"):
-            prompt_response = redis.hget(f"node:{node_id}", "prompt_response").decode('utf-8')
-            prev_chat_responses.append(f"Response {index+1}: {prompt_response}")
+    all_exists_in_redis = all(
+        redis.exists(f"node:{node['id']}") for node in parent_nodes
+    )
+
+    # Get prompt responses from redis
+    if all_exists_in_redis:
+        for index, node in enumerate(parent_nodes):
+            node_id = node["id"]
+            if redis.exists(f"node:{node_id}"):
+                prompt_response = redis.hget(f"node:{node_id}", "prompt_response").decode('utf-8')
+                prev_chat_responses.append(f"Response {index+1}: {prompt_response}")
+    # Get prompt responses from firestore
+    else:
+        canvas_doc_id = parent_nodes[0]["data"].get("canvasId")
+        if not canvas_doc_id:
+            return []
+        try:
+            canvas_doc = get_document_by_collection_and_id(db, "canvases", canvas_doc_id)
+        except ValueError:
+            return []
+        canvas_nodes = canvas_doc["nodes"]
+        for index, node in enumerate(parent_nodes):
+            node_id = node["id"]
+            if node_id in canvas_nodes:
+                prompt_response = canvas_nodes[node_id]["data"].get("prompt_response")
+                if prompt_response:
+                    prev_chat_responses.append(f"Response {index+1}: {prompt_response}")
+
     return prev_chat_responses
 
 
-def generate_prompt_question(redis, parent_nodes):
+def generate_prompt_question(redis, db, parent_nodes):
     """Generate a prompt suggestion"""
-    parent_responses = get_parent_responses(redis, parent_nodes=parent_nodes)
+    parent_responses = get_parent_responses(redis, db, parent_nodes=parent_nodes)
     context = "\n\n".join(parent_responses)
 
     chain = context_prompt_question_template | mistral_7b_together_model
@@ -101,9 +126,10 @@ def generate_response_with_context(
         model: str,
         prompt: str,
         redis,
-        parent_node_ids: list,
+        db,
+        parent_nodes: list,
 ):
-    parent_responses = get_parent_responses(redis, parent_node_ids)
+    parent_responses = get_parent_responses(redis, db, parent_nodes=parent_nodes)
     context = "\n\n".join(parent_responses)
 
     llm = get_model(model)

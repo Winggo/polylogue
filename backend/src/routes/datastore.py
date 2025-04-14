@@ -34,6 +34,7 @@ def canvases_operations():
                 'prompt': str,
                 'prompt_response': str,
                 'parent_ids': [str],
+                'canvasId': str,
             },
             'selected': bool,
             'measured': {
@@ -119,6 +120,7 @@ def canvas_operations(canvas_id):
                 'prompt': str,
                 'prompt_response': str,
                 'parent_ids': [str],
+                'canvasId': str,
             },
             'selected': bool,
             'measured': {

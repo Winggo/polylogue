@@ -60,6 +60,7 @@ export type ExtendedNodeData = {
     prompt_response?: string,
     parent_ids?: Array<string>,
     setNode: Function,
+    canvasId: string,
 }
 
 export type ExtendedNode = Node & {
@@ -148,6 +149,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                 data: {
                     ...node.data,
                     setNode,
+                    canvasId,
                 }
             })))
             setEdges((eds) => eds.concat(edgesForExistingNodes))
@@ -166,7 +168,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
 
         const newNode = createNewLlmTextNode({
             position,
-            data: { setNode },
+            data: { setNode, canvasId },
             origin: [0.0, 0.5],
         })
 
@@ -189,7 +191,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                 })
                 const newNode = createNewLlmTextNode({
                     position: nodePosition,
-                    data: { setNode },
+                    data: { setNode, canvasId },
                 })
                 setNodes((nds) => {
                     return nds.map((n) => {
@@ -296,7 +298,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                 const newNode = createNewLlmTextNode({
                     position: nodePosition,
                     origin: [0.0, 0.5],
-                    data: { setNode },
+                    data: { setNode, canvasId },
                 })
                 setNodes((nds) => nds.concat(newNode))
 

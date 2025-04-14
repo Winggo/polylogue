@@ -15,10 +15,11 @@ api_routes = Blueprint("api_routes", __name__)
 def generate_prompt():
     """Generate a prompt, given context"""
     r = current_app.config['REDIS']
+    db = current_app.config['FIRESTORE']
     data = request.json
 
     try:
-        prompt_question = generate_prompt_question(r, data.get("parentNodes", []))
+        prompt_question = generate_prompt_question(r, db, data.get("parentNodes", []))
     except Exception as e:
         return jsonify({"error": "Internal Server Error"}), 500
     
@@ -29,6 +30,7 @@ def generate_prompt():
 def generate():
     """Generate prompt response, given a prompt"""
     r = current_app.config['REDIS']
+    db = current_app.config['FIRESTORE']
 
     data = request.json
     model, prompt, node_id = data["model"], data["prompt"], data["nodeId"]
@@ -37,19 +39,21 @@ def generate():
             return jsonify({"error": f"{key} is required"}), 400
 
     try:
-        parent_node_ids = [parent["id"] for parent in data.get("parentNodes", [])]
         prompt_completion = generate_response_with_context(
             model=model,
             prompt=prompt,
             redis=r,
-            parent_node_ids=parent_node_ids
+            db=db,
+            parent_nodes=data.get("parentNodes", []),
         )
 
+        parent_node_ids = [parent["id"] for parent in data.get("parentNodes", [])]
         r.hset(f"node:{node_id}", mapping={
             "model": model,
             "prompt": prompt,
             "parent_ids": json.dumps(parent_node_ids or []),
             "prompt_response": prompt_completion,
+            "canvas_id": data["canvasId"],
         })
     except ValueError as e:
         return jsonify({"error": "Input Error"}), 400
