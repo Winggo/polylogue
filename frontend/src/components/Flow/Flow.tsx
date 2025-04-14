@@ -60,7 +60,7 @@ export type ExtendedNodeData = {
     prompt?: string,
     prompt_response?: string,
     parent_ids?: Array<string>,
-    setNode: Function,
+    setNode: (nodeId: string, newData: ExtendedNodeData) => void,
     canvasId: string,
 }
 
@@ -156,6 +156,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
             })))
             setEdges((eds) => eds.concat(edgesForExistingNodes))
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [existingNodes])
 
     // Upon new canvas, create single node in center of canvas
@@ -175,6 +176,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
         })
 
         reactFlowInstance.addNodes(newNode)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     // Create new node on Cmd/Ctrl + '
@@ -209,7 +211,8 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
             window.removeEventListener('mousemove', handleMouseMove)
             window.removeEventListener('keydown', handleKeyDown)
         }
-    }, [setNodes, cursorPosition])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [setNodes, cursorPosition, reactFlowInstance])
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -267,7 +270,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     },
                 })
             }
-        } catch(err) {
+        } catch {
             messageApi.error({
                 content: 'Cannot save canvas. Please try again in a moment.',
                 duration: 5,
@@ -328,6 +331,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                 )
             }
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [reactFlowInstance, setEdges, setNodes],
     )
 

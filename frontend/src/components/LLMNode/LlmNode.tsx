@@ -24,7 +24,7 @@ import {
 type LLMNodeProps = {
     id: string
     selected: boolean
-    data: Record<string, any>
+    data: Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 const initialModel = "mistral-7b"
@@ -83,6 +83,7 @@ export default function LLMNode ({
                 inputRef.current?.focus()
             }, 0)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const fetchPrompt = async (signal: AbortSignal ) => {
@@ -99,7 +100,7 @@ export default function LLMNode ({
             })
             const { prompt } = await response.json()
             setPlaceholder(prompt)
-        } catch (error) {
+        } catch {
         }
     }
 
@@ -114,6 +115,7 @@ export default function LLMNode ({
         return () => {
             controller.abort()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     // Add prompt suggestion incremental typing affect
@@ -129,6 +131,7 @@ export default function LLMNode ({
                 clearTimeout(timer)
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [curPlaceholder, placeholderIndex, placeholder])
 
     // Update ReactFlow nodes state every time node state is updated
@@ -164,7 +167,7 @@ export default function LLMNode ({
             })
             const data = await response.json()
             setPromptResponse(data.response)
-        } catch(error) {
+        } catch {
             setPromptResponse("An error occurred. Please try again.")
         } finally {
             clearTimeout(timeoutId)

@@ -37,13 +37,14 @@ export default function Index() {
 
             const canvas = await response.json()
             setCanvas(canvas["document"])
-        } catch(err) {
+        } catch {
             redirectToNewCanvasPage()
         }
     }
 
     useEffect(() => {
         fetchCanvas()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [canvas_id, router])
 
     return (
