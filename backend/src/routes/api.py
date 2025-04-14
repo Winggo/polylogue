@@ -1,10 +1,8 @@
-import json
 from flask import Blueprint, jsonify, request, current_app
 
 from ai_models import (
     generate_prompt_question,
     generate_response_with_context,
-    generate_chained_responses,
 )
 
 
@@ -14,12 +12,10 @@ api_routes = Blueprint("api_routes", __name__)
 @api_routes.route("/v1/prompt", methods=["POST"])
 def generate_prompt():
     """Generate a prompt, given context"""
-    r = current_app.config['REDIS']
-    db = current_app.config['FIRESTORE']
     data = request.json
 
     try:
-        prompt_question = generate_prompt_question(r, db, data.get("parentNodes", []))
+        prompt_question = generate_prompt_question(data.get("parentNodes", []))
     except Exception as e:
         return jsonify({"error": "Internal Server Error"}), 500
     
@@ -29,11 +25,9 @@ def generate_prompt():
 @api_routes.route("/v1/completion", methods=["POST"])
 def generate():
     """Generate prompt response, given a prompt"""
-    r = current_app.config['REDIS']
-    db = current_app.config['FIRESTORE']
 
     data = request.json
-    model, prompt, node_id = data["model"], data["prompt"], data["nodeId"]
+    model, prompt = data["model"], data["prompt"]
     for key in ["model", "prompt", "nodeId"]:
         if key not in data:
             return jsonify({"error": f"{key} is required"}), 400
@@ -42,19 +36,8 @@ def generate():
         prompt_completion = generate_response_with_context(
             model=model,
             prompt=prompt,
-            redis=r,
-            db=db,
             parent_nodes=data.get("parentNodes", []),
         )
-
-        parent_node_ids = [parent["id"] for parent in data.get("parentNodes", [])]
-        r.hset(f"node:{node_id}", mapping={
-            "model": model,
-            "prompt": prompt,
-            "parent_ids": json.dumps(parent_node_ids or []),
-            "prompt_response": prompt_completion,
-            "canvas_id": data["canvasId"],
-        })
     except ValueError as e:
         return jsonify({"error": "Input Error"}), 400
     except Exception as e:

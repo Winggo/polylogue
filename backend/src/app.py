@@ -20,20 +20,16 @@ else:
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 socketio = SocketIO(app, cors_allowed_origins='*', transports=['websocket'])
-r_client = start_redis_client()
-app.config['REDIS'] = r_client
 
 
 ds_client = start_firestore_project_client(os.environ["GCP_PROJECT"])
 app.config['FIRESTORE'] = ds_client
 
 
-from routes.datastore import ds_routes
-app.register_blueprint(ds_routes, url_prefix="/ds")
-
-
-from routes.api import api_routes
-app.register_blueprint(api_routes, url_prefix="/api")
+enable_redis = os.getenv("ENABLE_REDIS", "false").lower() == "true"
+if enable_redis:
+    r_client = start_redis_client()
+    app.config['REDIS'] = r_client
 
 
 enable_redis_pubsub = os.getenv("ENABLE_REDIS_PUBSUB", "false").lower() == "true"
@@ -43,6 +39,15 @@ if enable_redis_pubsub:
 
     from routes.sockets import socket_routes
     app.register_blueprint(socket_routes)
+
+
+
+from routes.datastore import ds_routes
+app.register_blueprint(ds_routes, url_prefix="/ds")
+
+
+from routes.api import api_routes
+app.register_blueprint(api_routes, url_prefix="/api")
 
 
 if __name__ == "__main__":
