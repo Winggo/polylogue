@@ -8,7 +8,14 @@ from redis_listener import start_redis_client, start_redis_pubsub
 from db.firestore import start_firestore_project_client
 
 
-load_dotenv()
+env = os.environ.get("FLASK_ENV", "local")
+if env == "production":
+    load_dotenv(".env.production")
+elif env == "local":
+    load_dotenv(".env.local")
+else:
+    load_dotenv(".env")
+
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
