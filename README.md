@@ -22,3 +22,5 @@ Each prompt & completion is represented as a node, and different models can be s
 - Redis
 - Firestore
 - Langchain
+- Together.ai
+- GCP
