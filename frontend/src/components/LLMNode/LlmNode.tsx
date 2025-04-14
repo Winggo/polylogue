@@ -9,7 +9,7 @@ import {
     useNodesData,
     type Node,
 } from '@xyflow/react'
-import { Skeleton } from "antd"
+import { Skeleton, Modal, Input } from "antd"
 import ReactMarkdown from 'react-markdown'
 
 import LLMNodeCard from "./LLMNodeCard"
@@ -35,12 +35,19 @@ const models = [
     { value: "gpt-4o", label: "GPT-4o" },
     { value: "claude-sonnet", label: "Claude 3.5 Sonnet" },
 ]
+const apiKeyRequiredModelMapping = {
+    "gpt-4o": "GPT-4o",
+    "claude-sonnet": "Claude 3.5 Sonnet",
+}
 const modelMapping = {
     "mistral-7b": "Mistral 7B",
     "mixtral-8x7b": "Mixtral 8x7B",
     "llama-3.3-70b": "Llama 3.3 70B",
-    "gpt-4o": "GPT-4o",
-    "claude-sonnet": "Claude 3.5 Sonnet",
+    ...apiKeyRequiredModelMapping,
+}
+const modelToComapnyMapping = {
+    "gpt-4o": "OpenAI",
+    "claude-sonnet": "Anthropic",
 }
 
 export default function LLMNode ({
@@ -68,6 +75,8 @@ export default function LLMNode ({
 
     const [loading, setLoading] = useState(false)
     const [isHovered, setIsHovered] = useState(false)
+    const [apiKeyModalOpen, setApiKeyModalOpen] = useState(false)
+    const [apiKeyTypeRequired, setApiKeyTypeRequired] = useState<keyof typeof apiKeyRequiredModelMapping | "">("")
 
     const connections = useNodeConnections({
         handleType: 'target',
@@ -171,7 +180,14 @@ export default function LLMNode ({
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => setPrompt(e.target.value)
-    const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => setModel(e.target.value as keyof typeof modelMapping)
+    const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        if (e.target.value in apiKeyRequiredModelMapping) {
+            setApiKeyTypeRequired(e.target.value as keyof typeof apiKeyRequiredModelMapping)
+            return setApiKeyModalOpen(true)
+        } else {
+            return setModel(e.target.value as keyof typeof modelMapping)
+        }
+    }
 
     const renderModelDropdown = () => {
         if (!selected && !isHovered) return
@@ -287,6 +303,49 @@ export default function LLMNode ({
         }
     }
 
+    const renderApiKeyModal = () => {
+        if (!apiKeyTypeRequired) return
+        return (
+            <Modal
+                open={apiKeyModalOpen}
+                title={
+                    `Enter your ${modelToComapnyMapping[apiKeyTypeRequired]} API key to run ${apiKeyRequiredModelMapping[apiKeyTypeRequired]} prompts`
+                }
+                centered
+                onOk={() => setApiKeyModalOpen(false)}
+                onCancel={() => setApiKeyModalOpen(false)}
+                okText="Save"
+                okType="default"
+                okButtonProps={{
+                    style: {
+                        border: '2px solid gray',
+                        boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.1)',
+                        fontFamily: 'Barlow',
+                        fontWeight: 500,
+                        width: '75px',
+                    }
+                }}
+                cancelButtonProps={{
+                    style: {
+                        fontFamily: 'Barlow',
+                        border: '2px solid lightgray',
+                        width: '75px',
+                    },
+                }}
+                closable={false}
+                afterClose={() => setApiKeyTypeRequired("")}
+            >
+                <p className="mb-[7px] italic">
+                    Note: Anyone with access to this canvas will be able to use the key.
+                </p>
+                <Input
+                    variant="outlined"
+                    placeholder="API KEY"
+                />                
+            </Modal>
+        )
+    }
+
     return (
         <div
             className="group"
@@ -319,6 +378,7 @@ export default function LLMNode ({
                     {renderOutput()}
                 </div>
             </div>
+            {renderApiKeyModal()}
         </div>
     )
 }

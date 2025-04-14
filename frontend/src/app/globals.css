@@ -64,6 +64,10 @@ body {
 .ant-input-affix-wrapper-focused {
     border-color: rgb(220, 143, 0) !important;
 }
+.ant-input-outlined:hover,
+.ant-input-outlined:focus-within {
+    border-color: rgb(220, 143, 0) !important;
+}
 
 /* LLM node */
 .prompt-output p,
