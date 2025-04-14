@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useCallback, useRef, useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import {
     ReactFlow,
     Background,
@@ -103,6 +104,7 @@ function createEdge(sourceId: string, targetId: string) {
 
 
 export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }: FlowProps) {
+    const pathname = usePathname()
     const reactFlowInstance = useReactFlow()
     const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
     const [messageApi, contextHolder] = message.useMessage()
@@ -334,7 +336,12 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     }
                 }}
                 cancelButtonProps={{ style: { display: 'none' } }}
-                afterClose={() => setCopyTooltipText("Copy Link")}
+                afterClose={() => {
+                    setCopyTooltipText("Copy Link")
+                    if (pathname === "/canvas") {
+                        window.history.replaceState(null, '', `/canvas/${canvasId}`)
+                    }
+                }}
             >
                 <p className="mb-[5px]">Or... have your friends chime in</p>
                 <Input
