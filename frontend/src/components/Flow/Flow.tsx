@@ -211,6 +211,20 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
         }
     }, [setNodes, cursorPosition])
 
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if ((event.metaKey || event.ctrlKey) && event.key === '\\') {
+                event.preventDefault()
+                reactFlowInstance.fitView()
+            }
+        }
+
+        window.addEventListener('keydown', handleKeyDown)
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown)
+        }
+    }, [reactFlowInstance])
+
     const handleSaveCanvas = async ({ curCanvasTitle }: { curCanvasTitle: string }) => {
         setSavingCanvas(true)
         try {
