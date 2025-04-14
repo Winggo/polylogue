@@ -9,4 +9,4 @@ export const edgeStyles = {
     strokeWidth: edgeStrokeWidth,
 }
 
-export const localBackendServerURL = 'http://127.0.0.1:5000'
+export const backendServerURL = 'http://127.0.0.1:5000'

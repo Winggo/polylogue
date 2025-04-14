@@ -6,7 +6,7 @@ import {
     ReactFlowProvider,
 } from '@xyflow/react'
 import Flow, { type ExtendedNode } from "../../../components/Flow/Flow"
-import { localBackendServerURL as backendServerURL } from '@/utils/constants'
+import { backendServerURL } from '@/utils/constants'
 
 
 interface Canvas {

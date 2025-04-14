@@ -17,7 +17,7 @@ import RightArrowCircle from "../../icons/RightArrowCircle"
 import DottedSquare from "../../icons/DottedSquare"
 import DownArrowCircle from "../../icons/DownArrowCircle"
 import {
-    localBackendServerURL as backendServerURL,
+    backendServerURL,
 } from "../../utils/constants"
 
 

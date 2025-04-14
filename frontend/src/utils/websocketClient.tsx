@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { io, Socket } from 'socket.io-client'
 
-import { localBackendServerURL as backendServerURL  } from './constants'
+import { backendServerURL  } from './constants'
 
 
 const WebSocketContext = createContext<Socket | null>(null)

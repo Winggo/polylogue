@@ -24,7 +24,7 @@ import {
     llmNodeSize,
     edgeStrokeColor,
     edgeStyles,
-    localBackendServerURL as backendServerURL,
+    backendServerURL,
 } from "../../utils/constants"
 
 
