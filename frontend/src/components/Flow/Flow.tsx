@@ -155,6 +155,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                 }
             })))
             setEdges((eds) => eds.concat(edgesForExistingNodes))
+            reactFlowInstance.fitView({ minZoom: 0.5, maxZoom: 0.9 })
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [existingNodes])
