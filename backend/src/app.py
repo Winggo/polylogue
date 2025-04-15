@@ -4,8 +4,8 @@ from flask import Flask
 from flask_cors import CORS
 from flask_socketio import SocketIO
 
-from redis_listener import start_redis_client, start_redis_pubsub
-from db.firestore import start_firestore_project_client
+from src.redis_listener import start_redis_client, start_redis_pubsub
+from src.db.firestore import start_firestore_project_client
 
 
 env = os.environ.get("FLASK_ENV", "local")
@@ -37,17 +37,16 @@ if enable_redis_pubsub:
     pubsub = start_redis_pubsub(r_client, socketio)
     app.config['PUBSUB'] = pubsub
 
-    from routes.sockets import socket_routes
-    app.register_blueprint(socket_routes)
 
 
-
-from routes.datastore import ds_routes
+from src.routes.datastore import ds_routes
 app.register_blueprint(ds_routes, url_prefix="/ds")
 
 
-from routes.api import api_routes
+from src.routes.api import api_routes
 app.register_blueprint(api_routes, url_prefix="/api")
+
+from src.routes.sockets import socket_routes
 
 
 if __name__ == "__main__":

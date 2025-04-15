@@ -2,7 +2,7 @@ from flask import Blueprint, request, current_app
 
 socket_routes = Blueprint("socket_routes", __name__)
 
-from app import socketio
+from src.app import socketio
 
 client_subscriptions = {}
 

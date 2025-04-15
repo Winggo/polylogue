@@ -9,4 +9,4 @@ export const edgeStyles = {
     strokeWidth: edgeStrokeWidth,
 }
 
-export const backendServerURL = process.env.NEXT_PUBLIC_BACKEND_ROOT_URL!;
+export const backendServerURL = process.env.NEXT_PUBLIC_BACKEND_ROOT_URL || ""

@@ -1,11 +1,11 @@
 from datetime import datetime
 from flask import Blueprint, jsonify, request, current_app
-from db.firestore import (
+from src.db.firestore import (
     get_document_by_collection_and_id,
     save_document_in_collection,
     update_document_in_collection,
 )
-from routes.validation.validate import validate_json, OptionalField
+from src.routes.validation.validate import validate_json, OptionalField
 
 
 ds_routes = Blueprint("ds_routes", __name__)

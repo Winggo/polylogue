@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, current_app
 
-from ai_models import (
+from src.ai_models import (
     generate_prompt_question,
     generate_response_with_context,
 )

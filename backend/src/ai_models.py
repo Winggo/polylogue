@@ -6,7 +6,7 @@ from langchain_anthropic import ChatAnthropic
 from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnableLambda
 from functools import partial
-from db.firestore import get_document_by_collection_and_id
+from src.db.firestore import get_document_by_collection_and_id
 
 
 mistral_7b_together_model = ChatTogether(
@@ -22,14 +22,16 @@ llama_3_3_70b_together_model = ChatTogether(
     model="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
     together_api_key=os.getenv("TOGETHER_API_KEY")
 )
-gpt_4o_model = ChatOpenAI(
-    model="gpt-4o",
-    api_key=os.getenv("OPENAI_API_KEY"),
-)
-claude_sonnet_model = ChatAnthropic(
-    model="claude-3-5-sonnet-20240620",
-    api_key=os.getenv("ANTHROPIC_API_KEY"),
-)
+if os.getenv("OPENAI_API_KEY"):
+    gpt_4o_model = ChatOpenAI(
+        model="gpt-4o",
+        api_key=os.getenv("OPENAI_API_KEY"),
+    )
+if os.getenv("ANTHROPIC_API_KEY"):
+    claude_sonnet_model = ChatAnthropic(
+        model="claude-3-5-sonnet-20240620",
+        api_key=os.getenv("ANTHROPIC_API_KEY"),
+    )
 
 
 def get_model(model_name):
