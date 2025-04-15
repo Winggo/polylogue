@@ -25,4 +25,3 @@ handlers:
 
 env_variables:
   NODE_ENV: "production"
-  NEXT_PUBLIC_BACKEND_ROOT_URL:

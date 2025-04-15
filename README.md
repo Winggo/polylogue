@@ -26,13 +26,12 @@ Each prompt & completion is represented as a node, and different models can be s
 ## Deployment
 This app is deployed used Google App Engine.
 Deploy backend first.
-1. Configure `backend/app.yaml` and add the required env variables. Reference `backend/app.example.yaml`.
+1. Configure `backend/app.yaml` and add any required env variables. Reference `backend/app.example.yaml`.
 2. Run `gcloud app deploy` in `backend/`.
     - Run `gcloud app logs tail -s backend` to debug issues.
 
 Deploy frontend second.
-1. Configure `frontend/app.yaml` and add the required env variables. Reference `frontend/app.example.yaml`.
-    - Set `NEXT_PUBLIC_BACKEND_ROOT_URL` as the backend URL created by App Engine.
-2. Run `yarn build`.
+1. Configure `frontend/app.yaml` and add any required env variables. Reference `frontend/app.example.yaml`.
+2. Run `NEXT_PUBLIC_BACKEND_ROOT_URL=<APP_ENGINE_BACKEND_URL> yarn build`.
 3. Run `gcloud app deploy` in `frontend/`.
     - Run `gcloud app logs tail -s frontend` to debug issues.
