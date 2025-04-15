@@ -47,3 +47,7 @@ frontend/node_modules/
 frontend/.next/
 frontend/dist/
 frontend/build/
+
+# GCP
+backend/app.yaml
+frontend/app.yaml

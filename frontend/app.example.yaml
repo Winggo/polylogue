@@ -1,0 +1,28 @@
+runtime: nodejs20
+service: default
+instance_class: F2
+
+entrypoint: "yarn start"
+
+handlers:
+- url: /favicon.ico
+  static_files: public/favicon.ico
+  upload: public/favicon.ico
+  secure: always
+
+- url: /_next/static/
+  static_dir: .next/static
+  secure: always
+  expiration: "1d"
+
+- url: /static
+  static_dir: public
+  secure: always
+
+- url: /.*
+  script: auto
+  secure: always
+
+env_variables:
+  NODE_ENV: "production"
+  NEXT_PUBLIC_BACKEND_ROOT_URL: ""
