@@ -16,6 +16,7 @@ import {
 } from '@xyflow/react'
 import { Fade } from "react-awesome-reveal"
 import { nanoid } from 'nanoid'
+import { useMediaQuery } from "react-responsive"
 import { Modal, Input, Tooltip, message } from "antd"
 import { CopyFilled } from "@ant-design/icons"
 
@@ -107,6 +108,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
     const pathname = usePathname()
     const reactFlowInstance = useReactFlow()
     const reactFlowWrapper = useRef<HTMLDivElement | null>(null)
+    const isMobile = useMediaQuery({ maxWidth: 768 })
     const [messageApi, contextHolder] = message.useMessage()
     const [flowRendered, setFlowRendered] = useState(false)
     const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 })
@@ -177,6 +179,10 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
         })
 
         reactFlowInstance.addNodes(newNode)
+
+        if (isMobile) {
+            reactFlowInstance.fitView()
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
