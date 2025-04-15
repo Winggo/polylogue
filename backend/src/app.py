@@ -37,6 +37,8 @@ if enable_redis_pubsub:
     pubsub = start_redis_pubsub(r_client, socketio)
     app.config['PUBSUB'] = pubsub
 
+    from src.routes.sockets import socket_routes
+
 
 
 from src.routes.datastore import ds_routes
@@ -45,8 +47,6 @@ app.register_blueprint(ds_routes, url_prefix="/ds")
 
 from src.routes.api import api_routes
 app.register_blueprint(api_routes, url_prefix="/api")
-
-from src.routes.sockets import socket_routes
 
 
 if __name__ == "__main__":

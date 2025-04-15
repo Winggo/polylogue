@@ -4,8 +4,6 @@ import { AntdRegistry } from '@ant-design/nextjs-registry'
 import '@xyflow/react/dist/base.css'
 import "./globals.css"
 
-import { WebSocketProvider } from '../utils/websocketClient'
-
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -38,11 +36,9 @@ export default function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                <WebSocketProvider>
-                    <AntdRegistry>
-                        {children}
-                    </AntdRegistry>
-                </WebSocketProvider>
+                <AntdRegistry>
+                    {children}
+                </AntdRegistry>
             </body>
         </html>
     )

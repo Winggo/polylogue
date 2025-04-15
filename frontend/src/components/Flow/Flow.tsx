@@ -331,11 +331,19 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                 const newEdge: Edge = createEdge(connectionState.fromNode.id, newNode.id)
                 setEdges((eds) => [...eds, newEdge])
 
-                reactFlowInstance.setCenter(
-                    nodePosition.x + llmNodeSize.width/2,
-                    nodePosition.y,
-                    { duration: 1000, zoom: 1.0 }
-                )
+                if (isMobile) {
+                    reactFlowInstance.setCenter(
+                        nodePosition.x + llmNodeSize.width/2,
+                        nodePosition.y,
+                        { duration: 1000, zoom: 0.5 }
+                    )
+                } else {
+                    reactFlowInstance.setCenter(
+                        nodePosition.x + llmNodeSize.width/2,
+                        nodePosition.y,
+                        { duration: 1000, zoom: 1.0 }
+                    )
+                }
             }
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
