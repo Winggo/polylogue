@@ -18,7 +18,7 @@ else:
 
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True)
+CORS(app, supports_credentials=True, origins=[os.environ["CORS_ORIGIN"]])
 socketio = SocketIO(app, cors_allowed_origins='*', transports=['websocket'])
 
 

@@ -16,3 +16,4 @@ env_variables:
   REDIS_PORT: "6379"
   ENABLE_REDIS_PUBSUB: "false"
   FLASK_ENV: "production"
+  CORS_ORIGIN: "https://polylogue.dev"
