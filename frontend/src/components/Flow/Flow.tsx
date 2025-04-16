@@ -61,7 +61,7 @@ export type ExtendedNodeData = {
     prompt?: string,
     prompt_response?: string,
     parent_ids?: Array<string>,
-    setNode: (nodeId: string, newData: ExtendedNodeData) => void,
+    setNode: (nodeId: string, newData: ExtendedNodeData, selected: boolean) => void,
     canvasId: string,
 }
 
@@ -118,12 +118,13 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
     const [nodes, setNodes, onNodesChange] = useNodesState<ExtendedNode>([])
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
 
-    const setNode = useCallback((nodeId: string, newData: ExtendedNodeData) => {
+    const setNode = useCallback((nodeId: string, newData: ExtendedNodeData, selected: boolean) => {
         setNodes((nds) =>
             nds.map((node) => {
                 if (node.id === nodeId) {
                     return {
                         ...node,
+                        selected: selected ?? node.selected,
                         data: {
                             ...node.data,
                             ...newData,

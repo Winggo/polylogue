@@ -225,6 +225,7 @@ export default function LLMNode ({
                     isConnectableEnd={false}
                     position={Position.Right}
                     className={`w-12 h-12 mt-[4px] rounded-lg !bg-transparent border-gray-800 !cursor-pointer`}
+                    onClick={() => setNode(nodeId, {}, false)}
                 >
                     {connectableStart && <RightArrowCircle />}
                 </Handle>
