@@ -7,6 +7,7 @@ import {
     NodeToolbar,
     useNodeConnections,
     useNodesData,
+    useReactFlow,
     type Node,
 } from '@xyflow/react'
 import { Skeleton } from "antd"
@@ -18,6 +19,7 @@ import DottedSquare from "../../icons/DottedSquare"
 import DownArrowCircle from "../../icons/DownArrowCircle"
 import {
     backendServerURL,
+    llmNodeSize,
 } from "../../utils/constants"
 
 
@@ -25,6 +27,8 @@ type LLMNodeProps = {
     id: string
     selected: boolean
     data: Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
+    positionAbsoluteX: number
+    positionAbsoluteY: number
 }
 
 const initialModel = "mistral-7b"
@@ -47,16 +51,20 @@ export default function LLMNode ({
     id: nodeId,
     selected,
     data={},
+    positionAbsoluteX,
+    positionAbsoluteY,
 }: LLMNodeProps) {
     const {
         model: existingModel,
         prompt: exstingPrompt,
         prompt_response: existingResponse,
         setNode,
+        createNextNode,
         canvasId,
     } = data
 
     const inputRef = useRef<HTMLTextAreaElement>(null)
+    const reactFlowInstance = useReactFlow()
 
     const [placeholder, setPlaceholder] = useState("")
     const [curPlaceholder, setCurPlaceholder] = useState("⇥ ")
@@ -167,6 +175,17 @@ export default function LLMNode ({
             })
             const data = await response.json()
             setPromptResponse(data.response)
+
+            // Deselect current node & auto-create follow up node
+            setNode(nodeId, {}, false)
+            const nextNode = createNextNode(nodeId, {
+                x: positionAbsoluteX + llmNodeSize.width + 300,
+                y: positionAbsoluteY + llmNodeSize.height + 40,
+            })
+            reactFlowInstance.fitView({
+                nodes: [{ id: nodeId }, { id: nextNode.id }],
+                duration: 1000,
+            })
         } catch {
             setPromptResponse("An error occurred. Please try again.")
         } finally {
@@ -206,25 +225,37 @@ export default function LLMNode ({
         )
     }
 
-    const renderHandles = () => (
-        <>
-            <Handle
-                id={nodeId}
-                type="target"
-                isConnectable
-                position={Position.Left}
-                className={`w-4 h-4 mt-[4px] rounded-lg !bg-white border-gray-800 border-2 !cursor-pointer`}
-            />
-            <Handle
-                id={nodeId}
-                type="source"
-                position={Position.Right}
-                className="w-12 h-12 mt-[4px] rounded-lg !bg-transparent border-gray-800 !cursor-pointer"
-            >
-                <RightArrowCircle />
-            </Handle>
-        </>
-    )
+    const renderHandles = () => {
+        const connectableStart = promptResponse !== ""
+        return (
+            <>
+                <Handle
+                    id={nodeId}
+                    type="target"
+                    isConnectable
+                    isConnectableStart={false}
+                    position={Position.Left}
+                    className={`w-4 h-4 mt-[4px] rounded-lg !bg-white border-gray-800 border-2 !cursor-pointer`}
+                />
+                <Handle
+                    id={nodeId}
+                    type="source"
+                    isConnectable={connectableStart}
+                    isConnectableEnd={false}
+                    position={Position.Right}
+                    className={`w-12 h-12 mt-[4px] rounded-lg !bg-transparent border-gray-800 !cursor-pointer`}
+                    onClick={() => {
+                        // Deselect current node after creating new one
+                        setTimeout(() => {
+                            setNode(nodeId, {}, false)
+                        }, 0)
+                    }}
+                >
+                    {connectableStart && <RightArrowCircle />}
+                </Handle>
+            </>
+        )
+    }
 
     const renderHeaders = () => (
         <>

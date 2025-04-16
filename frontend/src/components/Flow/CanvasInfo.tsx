@@ -155,11 +155,11 @@ export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, sa
         if (isMobile) return
         return (
             <Panel position="bottom-center" className="!z-3 text-black text-center !ml-0">
-                ⌘+&apos; to create new nodes -- ⌘+\ to view all nodes
-                <br />
                 Drag on background to move across canvas
                 <br />
                 Scroll with mouse or pinch on trackpad to zoom in & out
+                <br />
+                ⌘+&apos; to create new nodes -- ⌘+\ to view all nodes
             </Panel>
         )
     }
