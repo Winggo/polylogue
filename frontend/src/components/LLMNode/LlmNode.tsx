@@ -206,25 +206,31 @@ export default function LLMNode ({
         )
     }
 
-    const renderHandles = () => (
-        <>
-            <Handle
-                id={nodeId}
-                type="target"
-                isConnectable
-                position={Position.Left}
-                className={`w-4 h-4 mt-[4px] rounded-lg !bg-white border-gray-800 border-2 !cursor-pointer`}
-            />
-            <Handle
-                id={nodeId}
-                type="source"
-                position={Position.Right}
-                className="w-12 h-12 mt-[4px] rounded-lg !bg-transparent border-gray-800 !cursor-pointer"
-            >
-                <RightArrowCircle />
-            </Handle>
-        </>
-    )
+    const renderHandles = () => {
+        const connectableStart = promptResponse !== ""
+        return (
+            <>
+                <Handle
+                    id={nodeId}
+                    type="target"
+                    isConnectable
+                    isConnectableStart={false}
+                    position={Position.Left}
+                    className={`w-4 h-4 mt-[4px] rounded-lg !bg-white border-gray-800 border-2 !cursor-pointer`}
+                />
+                <Handle
+                    id={nodeId}
+                    type="source"
+                    isConnectable={connectableStart}
+                    isConnectableEnd={false}
+                    position={Position.Right}
+                    className={`w-12 h-12 mt-[4px] rounded-lg !bg-transparent border-gray-800 !cursor-pointer`}
+                >
+                    {connectableStart && <RightArrowCircle />}
+                </Handle>
+            </>
+        )
+    }
 
     const renderHeaders = () => (
         <>
