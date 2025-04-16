@@ -13,6 +13,7 @@ import {
     type Connection,
     type Node,
     type Edge,
+    XYPosition,
 } from '@xyflow/react'
 import { Fade } from "react-awesome-reveal"
 import { nanoid } from 'nanoid'
@@ -62,6 +63,7 @@ export type ExtendedNodeData = {
     prompt_response?: string,
     parent_ids?: Array<string>,
     setNode: (nodeId: string, newData: ExtendedNodeData, selected: boolean) => void,
+    createNextNode: (fromNodeId: string, newNodePosition: XYPosition) => ExtendedNode,
     canvasId: string,
 }
 
@@ -154,6 +156,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                 data: {
                     ...node.data,
                     setNode,
+                    createNextNode,
                     canvasId,
                 }
             })))
@@ -175,7 +178,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
 
         const newNode = createNewLlmTextNode({
             position,
-            data: { setNode, canvasId },
+            data: { setNode, createNextNode, canvasId },
             origin: [0.0, 0.5],
         })
 
@@ -203,7 +206,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                 })
                 const newNode = createNewLlmTextNode({
                     position: nodePosition,
-                    data: { setNode, canvasId },
+                    data: { setNode, createNextNode, canvasId },
                 })
                 setNodes((nds) => {
                     return nds.map((n) => {
@@ -291,6 +294,23 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
         }
     }
 
+    const createNextNode = useCallback(
+        (fromNodeId: string, newNodePosition: XYPosition) => {
+            const newNode = createNewLlmTextNode({
+                position: newNodePosition,
+                origin: [0.0, 0.5],
+                data: { setNode, createNextNode, canvasId },
+            })
+            setNodes((nds) => nds.concat(newNode))
+
+            const newEdge: Edge = createEdge(fromNodeId, newNode.id)
+            setEdges((eds) => [...eds, newEdge])
+
+            return newNode
+        },
+        [setNodes, setEdges]
+    )
+
     const onConnect = useCallback(
         (connection: Connection) => setEdges(
             (eds) => {
@@ -322,15 +342,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     nodePosition.x += 200
                 }
 
-                const newNode = createNewLlmTextNode({
-                    position: nodePosition,
-                    origin: [0.0, 0.5],
-                    data: { setNode, canvasId },
-                })
-                setNodes((nds) => nds.concat(newNode))
-
-                const newEdge: Edge = createEdge(connectionState.fromNode.id, newNode.id)
-                setEdges((eds) => [...eds, newEdge])
+                createNextNode(connectionState.fromNode.id, nodePosition)
 
                 if (isMobile) {
                     reactFlowInstance.setCenter(
