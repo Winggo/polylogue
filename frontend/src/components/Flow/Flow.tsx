@@ -120,7 +120,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
     const [nodes, setNodes, onNodesChange] = useNodesState<ExtendedNode>([])
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
 
-    const setNode = useCallback((nodeId: string, newData: ExtendedNodeData | {}, selected: boolean) => {
+    const setNode = useCallback((nodeId: string, newData: ExtendedNodeData | object, selected: boolean) => {
         setNodes((nds) =>
             nds.map((node) => {
                 if (node.id === nodeId) {
@@ -308,7 +308,8 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
 
             return newNode
         },
-        [setNodes, setEdges]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [setNodes, setEdges, canvasId]
     )
 
     const onConnect = useCallback(
