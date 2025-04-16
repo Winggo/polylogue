@@ -180,7 +180,7 @@ export default function LLMNode ({
             setNode(nodeId, {}, false)
             const nextNode = createNextNode(nodeId, {
                 x: positionAbsoluteX + llmNodeSize.width + 300,
-                y: positionAbsoluteY + llmNodeSize.height,
+                y: positionAbsoluteY + llmNodeSize.height + 40,
             })
             reactFlowInstance.fitView({
                 nodes: [{ id: nodeId }, { id: nextNode.id }],
@@ -244,7 +244,12 @@ export default function LLMNode ({
                     isConnectableEnd={false}
                     position={Position.Right}
                     className={`w-12 h-12 mt-[4px] rounded-lg !bg-transparent border-gray-800 !cursor-pointer`}
-                    onClick={() => setNode(nodeId, {}, false)}
+                    onClick={() => {
+                        // Deselect current node after creating new one
+                        setTimeout(() => {
+                            setNode(nodeId, {}, false)
+                        }, 0)
+                    }}
                 >
                     {connectableStart && <RightArrowCircle />}
                 </Handle>

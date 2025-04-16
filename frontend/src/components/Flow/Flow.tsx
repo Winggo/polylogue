@@ -120,7 +120,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
     const [nodes, setNodes, onNodesChange] = useNodesState<ExtendedNode>([])
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
 
-    const setNode = useCallback((nodeId: string, newData: ExtendedNodeData, selected: boolean) => {
+    const setNode = useCallback((nodeId: string, newData: ExtendedNodeData | {}, selected: boolean) => {
         setNodes((nds) =>
             nds.map((node) => {
                 if (node.id === nodeId) {
@@ -334,15 +334,15 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     y: clientY,
                 })
 
-                // Prevent new node from being created on top of existing one
-                // Let's move the new node 200px to right
+                // Clicked on right handle, set the new node position
                 const rightDeltaX = nodePosition.x - connectionState.fromNode.position.x
                 const deltaY = Math.abs(nodePosition.y - connectionState.fromNode.position.y)
                 if (((rightDeltaX - llmNodeSize.width) < 50) && deltaY < 100) {
-                    nodePosition.x += 200
+                    nodePosition.x += 300
+                    nodePosition.y -= llmNodeSize.height/2 + 40
                 }
 
-                createNextNode(connectionState.fromNode.id, nodePosition)
+                const nextNode = createNextNode(connectionState.fromNode.id, nodePosition)
 
                 if (isMobile) {
                     reactFlowInstance.setCenter(
@@ -351,11 +351,10 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                         { duration: 1000, zoom: 0.5 }
                     )
                 } else {
-                    reactFlowInstance.setCenter(
-                        nodePosition.x + llmNodeSize.width/2,
-                        nodePosition.y,
-                        { duration: 1000, zoom: 1.0 }
-                    )
+                    reactFlowInstance.fitView({
+                        nodes: [{ id: connectionState.fromNode.id }, { id: nextNode.id }],
+                        duration: 1000,
+                    })
                 }
             }
         },
