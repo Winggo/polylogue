@@ -112,7 +112,7 @@ export default function LLMNode ({
         }
     }
 
-    // Fetch prompt suggestion
+    // Fetch prompt suggestion on creation
     useEffect(() => {
         if (prompt) return
 
@@ -177,15 +177,18 @@ export default function LLMNode ({
             setPromptResponse(data.response)
 
             // Deselect current node & auto-create follow up node
-            setNode(nodeId, {}, false)
-            const nextNode = createNextNode(nodeId, {
-                x: positionAbsoluteX + llmNodeSize.width + 300,
-                y: positionAbsoluteY + llmNodeSize.height + 40,
-            })
-            reactFlowInstance.fitView({
-                nodes: [{ id: nodeId }, { id: nextNode.id }],
-                duration: 1000,
-            })
+            // Add delay to allow promptResponse to be updated in parent node
+            setTimeout(() => {
+                setNode(nodeId, {}, false)
+                const nextNode = createNextNode(nodeId, {
+                    x: positionAbsoluteX + llmNodeSize.width + 300,
+                    y: positionAbsoluteY + llmNodeSize.height + 40,
+                })
+                reactFlowInstance.fitView({
+                    nodes: [{ id: nodeId }, { id: nextNode.id }],
+                    duration: 1000,
+                })
+            }, 200)
         } catch {
             setPromptResponse("An error occurred. Please try again.")
         } finally {
