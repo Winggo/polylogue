@@ -53,10 +53,10 @@ def get_model(model_name):
 
 context_prompt_question_template = PromptTemplate(
     input_variables=["context"],
-    template="""Given the following context, generate a simple follow up question intended to induce curisoity.
+    template="""Given the following context, generate an interesting follow up question intended to induce curisoity.
 If no context is provided, generate a question users will be curious to know the answer to.
-Always end with a question mark. Do not surround the question in quotes.
-*IMPORTANT: GENERATED QUESTION NEEDS TO USE LESS THAN 10 WORDS*.
+Always end with a question mark. DO NOT surround the question in quotes.
+*IMPORTANT: GENERATED QUESTION NEEDS TO USE LESS THAN 8 WORDS*.
 *Context:*
 {context}"""
 )
@@ -64,10 +64,10 @@ Always end with a question mark. Do not surround the question in quotes.
 
 context_prompt_template = PromptTemplate(
     input_variables=["context", "prompt"],
-    template="""Given the following context and prompt, reply thoughtfully in *LESS THAN 180 WORDS*.
+    template="""Given the following context and prompt, reply thoughtfully in *LESS THAN 150 WORDS*.
 There may be no context provided. Do not mention the response or context name.
-For readability, divide your response into paragraphs, use bullet points or numbered lists, and use markdown whenever appropriate.
-Add newlines between each bullet point. Try ending the response with a question to encourage discussion.
+Seperate ideas into paragraphs, use bullet points, numbered lists, bolded & italicized words or phrases for better readability.
+Add newlines between each bullet point.
 *Context:*
 {context}
 
