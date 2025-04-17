@@ -46,7 +46,7 @@ export default function CanvasInfo({ canvasId, canvasTitle, handleSaveCanvas, sa
 
     const renderTopLeftPanel = () => {
         return (
-            <Panel position="top-left" className="!z-3 text-black">
+            <Panel position="top-left" className="!z-5 text-black">
                 <Popconfirm
                     title="Go to new canvas page"
                     description="Save your canvas before leaving!"

@@ -356,7 +356,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     reactFlowInstance.fitView({
                         nodes: [{ id: connectionState.fromNode.id }, { id: nextNode.id }],
                         duration: 1000,
-                        padding: 0.06,
+                        padding: 0.07,
                     })
                 }
             }

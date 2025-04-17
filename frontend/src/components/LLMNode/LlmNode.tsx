@@ -188,7 +188,7 @@ export default function LLMNode ({
                 reactFlowInstance.fitView({
                     nodes: [{ id: nodeId }, { id: nextNode.id }],
                     duration: 1000,
-                    padding: 0.02,
+                    padding: 0.07,
                 })
             }, 200)
         } catch {
