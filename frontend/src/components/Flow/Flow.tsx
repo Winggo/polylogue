@@ -168,7 +168,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
 
     // Upon new canvas, create single node in center of canvas
     useEffect(() => {
-        if (!newCanvas) return
+        if (!newCanvas || !canvasId) return
         if (!reactFlowWrapper?.current) return
         const { width, height } = reactFlowWrapper.current.getBoundingClientRect()
         const position = {
@@ -188,7 +188,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
             reactFlowInstance.fitView()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [canvasId])
 
     // Create new node on Cmd/Ctrl + '
     useEffect(() => {
