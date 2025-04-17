@@ -20,6 +20,7 @@ import DownArrowCircle from "../../icons/DownArrowCircle"
 import {
     backendServerURL,
     llmNodeSize,
+    llmNewNodeDeltaX,
 } from "../../utils/constants"
 
 
@@ -181,12 +182,13 @@ export default function LLMNode ({
             setTimeout(() => {
                 setNode(nodeId, {}, false)
                 const nextNode = createNextNode(nodeId, {
-                    x: positionAbsoluteX + llmNodeSize.width + 300,
+                    x: positionAbsoluteX + llmNodeSize.width + llmNewNodeDeltaX,
                     y: positionAbsoluteY + llmNodeSize.height + 40,
                 })
                 reactFlowInstance.fitView({
                     nodes: [{ id: nodeId }, { id: nextNode.id }],
                     duration: 1000,
+                    padding: 0.01,
                 })
             }, 200)
         } catch {

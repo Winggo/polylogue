@@ -25,6 +25,7 @@ import LLMNode from "../LLMNode/LlmNode"
 import CanvasInfo from "./CanvasInfo"
 import {
     llmNodeSize,
+    llmNewNodeDeltaX,
     edgeStrokeColor,
     edgeStyles,
     backendServerURL,
@@ -172,8 +173,8 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
         if (!reactFlowWrapper?.current) return
         const { width, height } = reactFlowWrapper.current.getBoundingClientRect()
         const position = {
-            x: ((width / 2) - (llmNodeSize.width / 2)) * (1 / 0.86), // account for 0.9 zoom
-            y: (height / 2) * (1 / 0.9),
+            x: ((width / 2) - (llmNodeSize.width / 2)) * (1 / 1.28), // account for 0.9 zoom
+            y: (height / 2) * (1 / 1.2),
         };
 
         const newNode = createNewLlmTextNode({
@@ -339,7 +340,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                 const rightDeltaX = nodePosition.x - connectionState.fromNode.position.x
                 const deltaY = Math.abs(nodePosition.y - connectionState.fromNode.position.y)
                 if (((rightDeltaX - llmNodeSize.width) < 50) && deltaY < 100) {
-                    nodePosition.x += 300
+                    nodePosition.x += llmNewNodeDeltaX
                     nodePosition.y -= llmNodeSize.height/2 + 40
                 }
 
@@ -355,6 +356,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     reactFlowInstance.fitView({
                         nodes: [{ id: connectionState.fromNode.id }, { id: nextNode.id }],
                         duration: 1000,
+                        padding: 0.06,
                     })
                 }
             }
@@ -427,7 +429,7 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     defaultEdgeOptions={{ style: edgeStyles}}
                     connectionLineStyle={edgeStyles}
                     colorMode="light"
-                    defaultViewport={{ x: 0, y: 0, zoom: 0.9 }}
+                    defaultViewport={{ x: 0, y: 0, zoom: 1.2 }}
                 >
                     <Background gap={25} />
                     {flowRendered && (
