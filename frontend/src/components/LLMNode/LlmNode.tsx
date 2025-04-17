@@ -338,7 +338,7 @@ export default function LLMNode ({
             {renderHandles()}
             {renderHeaders()}
             <div className={`
-                w-[600px]
+                w-[650px]
                 h-[700px]
                 bg-white
                 text-black

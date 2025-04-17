@@ -1,5 +1,5 @@
 export const llmNodeSize = {
-    width: 600,
+    width: 650,
     height: 700,
 }
 export const llmNewNodeDeltaX = 150
