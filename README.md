@@ -8,11 +8,11 @@ Each prompt & completion is represented as a node, and different models can be s
 
 ## Goals
 - Enable multimodal capabilities such as images
-- Enable realtime collaborative editing
+- Enable real-time collaborative editing
 
 ## Backlog
 - Allow resizing nodes
-- Explore templating conversations for different usecases
+- Explore templating conversations for different use cases
 
 ## Stack
 - Next.js & tailwind
@@ -24,7 +24,7 @@ Each prompt & completion is represented as a node, and different models can be s
 - GCP
 
 ## Deployment
-This app is deployed used Google App Engine.
+This app is deployed using Google App Engine.
 Deploy backend first.
 1. Configure `backend/app.yaml` and add any required env variables. Reference `backend/app.example.yaml`.
 2. Run `gcloud app deploy` in `backend/`.
