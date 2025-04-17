@@ -64,7 +64,7 @@ export type ExtendedNodeData = {
     prompt_response?: string,
     parent_ids?: Array<string>,
     setNode: (nodeId: string, newData: ExtendedNodeData, selected: boolean) => void,
-    createNextNode: (fromNodeId: string, newNodePosition: XYPosition) => ExtendedNode,
+    createNextNode: (fromNodeId: string, newNodePosition: XYPosition, newNodeData: object) => ExtendedNode,
     canvasId: string,
 }
 
@@ -296,11 +296,16 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
     }
 
     const createNextNode = useCallback(
-        (fromNodeId: string, newNodePosition: XYPosition) => {
+        (fromNodeId: string, newNodePosition: XYPosition, newNodeData: object = {}) => {
             const newNode = createNewLlmTextNode({
                 position: newNodePosition,
                 origin: [0.0, 0.5],
-                data: { setNode, createNextNode, canvasId },
+                data: {
+                    ...newNodeData,
+                    setNode,
+                    createNextNode,
+                    canvasId,
+                },
             })
             setNodes((nds) => nds.concat(newNode))
 
@@ -344,7 +349,11 @@ export default function Flow({ canvasId, canvasTitle, existingNodes, newCanvas }
                     nodePosition.y -= llmNodeSize.height/2 + 40
                 }
 
-                const nextNode = createNextNode(connectionState.fromNode.id, nodePosition)
+                const nextNode = createNextNode(
+                    connectionState.fromNode.id,
+                    nodePosition,
+                    { model: connectionState.fromNode.data.model }
+                )
 
                 if (isMobile) {
                     reactFlowInstance.setCenter(

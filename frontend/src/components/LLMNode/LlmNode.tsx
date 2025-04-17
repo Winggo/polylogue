@@ -181,10 +181,14 @@ export default function LLMNode ({
             // Add delay to allow promptResponse to be updated in parent node
             setTimeout(() => {
                 setNode(nodeId, {}, false)
-                const nextNode = createNextNode(nodeId, {
-                    x: positionAbsoluteX + llmNodeSize.width + llmNewNodeDeltaX,
-                    y: positionAbsoluteY + llmNodeSize.height + 40,
-                })
+                const nextNode = createNextNode(
+                    nodeId,
+                    {
+                        x: positionAbsoluteX + llmNodeSize.width + llmNewNodeDeltaX,
+                        y: positionAbsoluteY + llmNodeSize.height + 40,
+                    },
+                    { model }
+                )
                 reactFlowInstance.fitView({
                     nodes: [{ id: nodeId }, { id: nextNode.id }],
                     duration: 1000,
