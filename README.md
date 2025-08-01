@@ -5,6 +5,7 @@ A figma-like canvas editor to visualize and engage in branching conversations ac
 Each prompt & completion is represented as a node, and different models can be selected for each node.
 
 ![Initial view](assets/preview.png)
+![Conversation view](assets/conversation-preview.png)
 
 ## Goals
 - Enable multimodal capabilities such as images
