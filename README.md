@@ -4,7 +4,7 @@ _discussion or speech involving multiple participants, through multiple forms of
 A figma-like canvas editor to visualize and engage in branching conversations across various LLMs.
 Each prompt & completion is represented as a node, and different models can be selected for each node.
 
-<img width="1812" alt="image" src="https://github.com/user-attachments/assets/04aa884e-4ce4-406d-962b-890cfc85d7d7" />
+![Initial view](assets/preview.png)
 
 ## Goals
 - Enable multimodal capabilities such as images
