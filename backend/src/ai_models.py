@@ -9,8 +9,8 @@ from functools import partial
 from src.db.firestore import get_document_by_collection_and_id
 
 
-mistral_7b_together_model = ChatTogether(
-    model="mistralai/Mistral-7B-Instruct-v0.3",
+qwen_2_5_7b_together_model = ChatTogether(
+    model="Qwen/Qwen2.5-7B-Instruct-Turbo",
     together_api_key=os.getenv("TOGETHER_API_KEY"),
     temperature=0.7,
 )
@@ -35,8 +35,8 @@ if os.getenv("ANTHROPIC_API_KEY"):
 
 
 def get_model(model_name):
-    if model_name == "mistral-7b":
-        llm = mistral_7b_together_model
+    if model_name == "qwen-2.5-7b":
+        llm = qwen_2_5_7b_together_model
     elif model_name == "mixtral-8x7b":
         llm = mixtral_8x7b_together_model
     elif model_name == "llama-3.3-70b":
@@ -129,7 +129,7 @@ def generate_prompt_question(parent_nodes):
     parent_responses = get_parent_responses(parent_nodes=parent_nodes)
     context = "\n\n".join(parent_responses)
 
-    chain = context_prompt_question_template | mistral_7b_together_model
+    chain = context_prompt_question_template | qwen_2_5_7b_together_model
     prompt_question = chain.invoke({ "context": context })
     
     return prompt_question.content if hasattr(prompt_question, 'content') else str(prompt_question)

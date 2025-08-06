@@ -32,16 +32,16 @@ type LLMNodeProps = {
     positionAbsoluteY: number
 }
 
-const initialModel = "mistral-7b"
+const initialModel = "qwen-2.5-7b"
 const models = [
-    { value: "mistral-7b", label: "Mistral 7B" },
+    { value: "qwen-2.5-7b", label: "Qwen 2.5 7B" },
     { value: "mixtral-8x7b", label: "Mixtral 8x7B" },
     { value: "llama-3.3-70b", label: "Llama 3.3 70B" },
     { value: "gpt-4o", label: "GPT-4o", apiKeyRequired: true },
     { value: "claude-sonnet", label: "Claude 3.5", apiKeyRequired: true },
 ]
 const modelMapping = {
-    "mistral-7b": "Mistral 7B",
+    "qwen-2.5-7b": "Qwen 2.5 7B",
     "mixtral-8x7b": "Mixtral 8x7B",
     "llama-3.3-70b": "Llama 3.3 70B",
     "gpt-4o": "GPT-4o",
