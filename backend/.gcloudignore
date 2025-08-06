@@ -20,6 +20,6 @@ __pycache__/
 
 
 .env*
-venv/
-.venv/
+venv*/
+.venv*/
 dump.rdb

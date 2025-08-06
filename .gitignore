@@ -41,8 +41,8 @@ next-env.d.ts
 # redis
 dump.rdb
 
-backend/venv/
-backend/__pycache__/
+backend/venv*/
+backend/**/__pycache__/
 frontend/node_modules/
 frontend/.next/
 frontend/dist/
